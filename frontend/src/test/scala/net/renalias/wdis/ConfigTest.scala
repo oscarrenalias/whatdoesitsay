@@ -1,6 +1,5 @@
 import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
-
  
 class ExampleSuite extends FunSuite with ShouldMatchers {
 	
@@ -12,5 +11,9 @@ class ExampleSuite extends FunSuite with ShouldMatchers {
 	
 	test("Config returns default values if key is not found") {
 		Config.getString("whatever", "default") should equal ("default")
+	}
+	
+	test("Config returns None for keys that don't exist") {
+		Config.getString("whatever") should be (None)
 	}
 }
