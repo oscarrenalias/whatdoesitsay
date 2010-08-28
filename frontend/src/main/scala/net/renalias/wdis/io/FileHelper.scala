@@ -1,5 +1,7 @@
 package net.renalias.wdis.io
 
+import net.liftweb.util.StringHelpers
+
 import scala.runtime.RichLong
 import java.io._
 
@@ -14,5 +16,7 @@ class FileHelper(file : File) {
 object FileHelper {
   	implicit def file2helper(file : File) = new FileHelper(file)
 
-	def randomName(): String = System.currentTimeMillis().toHexString
+	def randomName() = StringHelpers.randomString(32)
+	
+	def isImage: Boolean = true
 }
