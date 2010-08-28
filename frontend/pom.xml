@@ -83,6 +83,13 @@
       <scope>system</scope>
 	  <systemPath>${basedir}/src/main/resources/lib/configgy-2.8.0-1.5.5.jar</systemPath>
     </dependency>
+	<!-- scalatest -->
+    <dependency>
+      <groupId>org.scalatest</groupId>
+      <artifactId>scalatest</artifactId>
+      <version>1.2</version>
+	  <scope>test</scope>
+    </dependency>	
   </dependencies>
 
   <build>
@@ -202,6 +209,19 @@
           </jvmArgs>
         </configuration>
       </plugin>
+	<!-- for scalatest -->
+	<!-- see http://tbje.blogspot.com/2010/03/maven-and-scalatest.html in order to install the plugin -->
+	<plugin>
+	 <groupId>com.jteigen</groupId>
+	 <artifactId>maven-scalatest-plugin</artifactId>
+	 <version>1.1-SNAPSHOT</version>
+	 <configuration>
+	  <testFailureIgnore>true</testFailureIgnore>
+	  <filereports>NCXEHLOWFD file/constrained.txt,file/full.txt</filereports>
+	  <xmlreports>xml</xmlreports>
+	  <htmlreports>html/report.html</htmlreports>
+	 </configuration>
+	</plugin>
     </plugins>
   </reporting>
 </project>
