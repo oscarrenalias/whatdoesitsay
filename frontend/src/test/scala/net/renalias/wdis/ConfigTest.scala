@@ -1,7 +1,7 @@
 import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
  
-class ExampleSuite extends FunSuite with ShouldMatchers {
+class ConfigTestSuite extends FunSuite with ShouldMatchers {
 	
 	import net.renalias.wdis.config.Config
 	
