@@ -11,6 +11,7 @@ import _root_.net.liftweb.mapper.{DB, ConnectionManager, Schemifier, DefaultConn
 import _root_.java.sql.{Connection, DriverManager}
 
 import net.renalias.wdis.model._
+import net.renalias.wdis.io.FolderWatcher
 
 /**
   * A class that's instantiated early and run.  It allows the application
@@ -55,6 +56,9 @@ class Boot {
     LiftRules.early.append(makeUtf8)
 
     S.addAround(DB.buildLoanWrapper)
+
+	// start the folder watcher thread
+	FolderWatcher.start
   }
 
   /**

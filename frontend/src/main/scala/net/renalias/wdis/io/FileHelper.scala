@@ -1,8 +1,6 @@
 package net.renalias.wdis.io
 
 import net.liftweb.util.StringHelpers
-
-import scala.runtime.RichLong
 import java.io._
 
 class FileHelper(file : File) {
