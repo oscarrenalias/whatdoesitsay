@@ -1,4 +1,5 @@
 from logger import Logger
+from threading import Thread
 
 # global logging class
 l = Logger("FolderObserver")
@@ -85,6 +86,9 @@ class FolderObserver(ListenerManager):
 		import fnmatch
 		matches = []
 		for file in files:
+			# let's keep the original file name
+			fileName = file
+			# now see if we can match any of the patterns
 			for pattern in self.patterns:
 				# convert the pattern and the file name to lower case if we're ignoring the case
 				if self.ignoreCase: 
@@ -92,7 +96,7 @@ class FolderObserver(ListenerManager):
 					file = file.lower()
 				
 				if fnmatch.fnmatch(file, pattern):
-					matches.append(file)
+					matches.append(fileName)
 				
 		return matches
 		
@@ -119,3 +123,14 @@ class FolderObserver(ListenerManager):
 			event = FolderChangesEvent("FileRemoved", removed)
 			self.notify(event)
 		  before = after
+		
+#
+# Runs the folder observer in a separate thread
+#
+class ThreadedFolderObserver(FolderObserver, Thread):
+	def __init__(self, folder, pollTime = 10, forceRescan=False, patterns="*", ignoreCase=True):
+		Thread.__init__(self)
+		FolderObserver.__init__(self, folder, pollTime, forceRescan, patterns, ignoreCase)
+	
+	def run(self):
+		self.waitForChanges()

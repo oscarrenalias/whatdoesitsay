@@ -1,9 +1,10 @@
 from logger import Logger
-from folderobserver import Listener, FolderObserver
+from folderobserver import Listener, FolderObserver, ThreadedFolderObserver
 from config import Config
 import shutil
 import os
 import subprocess
+from threading import Thread
 
 # global logging class
 l = Logger("Scanner")
@@ -69,7 +70,7 @@ class Scanner(Listener):
 		
 	def setStatus(self, file, status):
 		if status == self.STATUS_IN_PROGRESS:
-			print("STATUS_IN_PROGRESS: Moving file %s to folder %s" % (file, Config.processing))			
+			print("STATUS_IN_PROGRESS: Moving file %s to folder %s" % (file, Config.processing))
 			shutil.move(FileUtils.incoming(file), FileUtils.processing(file))			
 		if status == self.STATUS_COMPLETED:
 			print("STATUS_COMPLETED: Moving file %s to folder %s" % (file, Config.completed))
@@ -94,18 +95,29 @@ class Scanner(Listener):
 		self.scan(processFile)
 		
 		# mark as completed
-		self.setStatus(file, self.STATUS_COMPLETED)
-		
+		self.setStatus(file, self.STATUS_COMPLETED)	
+	
 def main():
-	# create one listener
-	scanner = Scanner()
-	observer = FolderObserver(
-		Config.incoming, 
-		pollTime=Config.pollTime, 
-		patterns=Config.filePatterns, 
-		ignoreCase=True
-	)
-	observer.addListener(scanner)
-	observer.waitForChanges()
+	# configure the most basic logging capabilities
+	import logging
+	logging.basicConfig()
+	sl = Logger("Scanner")
+	
+	while True:
+		# create one listener
+		scanner = Scanner()
+		observer = ThreadedFolderObserver(
+			Config.incoming, 
+			pollTime=Config.pollTime, 
+			patterns=Config.filePatterns, 
+			ignoreCase=True
+			)
+	
+		observer.addListener(scanner)
+		observer.start()
+		observer.join()
+		# if the join() method terminates is because the thread ended (died through an exception, most likely)
+		# Since we want to keep the processing running, we'll create a new one
+		sl.error("ThreadedFolderObserver thread terminated, creating new one...")
 	
 main()
