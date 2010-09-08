@@ -16,7 +16,7 @@ class Config:
 	#
 	# base folder
 	#
-	baseFolder = ""
+	baseFolder = "/tmp/whatdoesitsay/"
 	
 	#
 	# folder to watch for incoming data
