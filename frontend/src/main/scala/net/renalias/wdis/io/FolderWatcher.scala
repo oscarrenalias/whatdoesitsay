@@ -42,13 +42,13 @@ class FolderWatcher(val folder: Folder, val delay:Int = 5000) extends Actor with
 			// current list of files
 			now = folder.toList
 			// compare the prevous and current lists, to see if there's any changes
-			log.info("comparing differences...")
+			log.debug("FolderWatcher thread waking up")
 			val added = now filterNot (previous contains)
 			val deleted = previous filterNot (now contains)
 			
 			// debug information
-			log.debug("Added files: " + added.mkString("\n"))
-			log.debug("Deleted files: " + deleted.mkString("\n"))			
+			if(added.nonEmpty) log.debug("Added files: " + added.mkString("\n"))
+			if(deleted.nonEmpty) log.debug("Deleted files: " + deleted.mkString("\n"))			
 			
 			// notify the listeners
 			added.nonEmpty match {
