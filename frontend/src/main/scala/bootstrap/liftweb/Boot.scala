@@ -39,6 +39,7 @@ class Boot {
 
     // Build SiteMap
     val entries = Menu(Loc("Home", List("index"), "Home")) :: Nil
+				  Menu(Loc("View Document", List("document"), "View Document")) :: Nil
     LiftRules.setSiteMap(SiteMap(entries:_*))
 
     /*
