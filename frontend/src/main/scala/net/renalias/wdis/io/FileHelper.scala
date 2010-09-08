@@ -17,4 +17,12 @@ object FileHelper {
 	def randomName() = StringHelpers.randomString(32)
 	
 	def isImage: Boolean = true
+	
+	def getExtension(fileName:String): Option[String] = {
+		fileName.lastIndexOf('.') match {
+			case -1 => None
+			case x:Int if x==(fileName.length-1) => None
+			case x:Int => new Some(fileName.substring(x+1).toLowerCase)
+		}		
+	}
 }
