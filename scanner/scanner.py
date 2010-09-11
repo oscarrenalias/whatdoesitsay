@@ -21,6 +21,26 @@ class FileUtils:
 	@staticmethod
 	def completed(file):
 		return Config.completed + "/" + file		
+		
+	@staticmethod
+	def archive(file):
+		return Config.archive + "/" + file
+
+	@staticmethod
+	def error(file):
+		return Config.error + "/" + file		
+		
+	# checks if all the required folders are in place
+	@staticmethod
+	def checkFolders():
+		return(
+			os.path.isdir(Config.incoming) and
+			os.path.isdir(Config.processing) and
+			os.path.isdir(Config.completed) and
+			os.path.isdir(Config.archive) and
+			os.path.isdir(Config.error)
+		)
+		
 
 #
 # Listener class that reacts to folder changes
@@ -31,6 +51,7 @@ class Scanner(Listener):
 	STATUS_NEW = 1
 	STATUS_IN_PROGRESS = 2
 	STATUS_COMPLETED = 3
+	STATUS_ERROR = 4
 	
 	def notify(self, event):
 		print( "Event notified: " + event.name)
@@ -73,9 +94,13 @@ class Scanner(Listener):
 			print("STATUS_IN_PROGRESS: Moving file %s to folder %s" % (file, Config.processing))
 			shutil.move(FileUtils.incoming(file), FileUtils.processing(file))			
 		if status == self.STATUS_COMPLETED:
-			print("STATUS_COMPLETED: Moving file %s to folder %s" % (file, Config.completed))
+			print("STATUS_COMPLETED: Archiving file %s to folder %s" % (file, Config.archive))
+			# archive the image
+			shutil.move(FileUtils.processing(file), FileUtils.archive(file))
+		if status == self.STATUS_ERROR:
+			print("STATUS_ERROR: Moving file %s to folder %s" % (file, Config.error))
 			# move the image
-			shutil.move(FileUtils.processing(file), FileUtils.completed(file))
+			shutil.move(FileUtils.processing(file), FileUtils.error(file))			
 			
 	def processFileFromEvent(self, file):
 		print("Processing file: "  + file)
@@ -102,6 +127,11 @@ def main():
 	import logging
 	logging.basicConfig()
 	sl = Logger("Scanner")
+	
+	if FileUtils.checkFolders() == False:
+		import sys
+		print("One or more of the requird folders do not exist or are not valid. Please check the configuration file.")
+		sys.exit(-1)
 	
 	while True:
 		# create one listener
