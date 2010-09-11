@@ -16,7 +16,7 @@ class Config:
 	#
 	# base folder
 	#
-	baseFolder = "/tmp/whatdoesitsay/"
+	baseFolder = "../files/"
 	
 	#
 	# folder to watch for incoming data
@@ -24,6 +24,8 @@ class Config:
 	incoming = baseFolder + "incoming"
 	processing = baseFolder + "processing"
 	completed = baseFolder + "completed"
+	error = baseFolder + "error"
+	archive = baseFolder + "archive"
 	
 	#
 	# path to tesseract
