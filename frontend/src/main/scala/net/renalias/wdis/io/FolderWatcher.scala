@@ -42,7 +42,6 @@ class FolderWatcher(val folder: Folder, val delay:Int = 5000) extends Actor with
 			// current list of files
 			now = folder.toList
 			// compare the prevous and current lists, to see if there's any changes
-			log.debug("FolderWatcher thread waking up")
 			val added = now filterNot (previous contains)
 			val deleted = previous filterNot (now contains)
 			
@@ -74,4 +73,4 @@ object FolderWatcher extends FolderWatcher(
 	Integer.parseInt(Config.getString("watcher.frequency", "5000"))) 
 	with SimpleLogger {
 		log.info("FolderWatcher starting - folder = " + folder.toString + ", poll frequency = " + delay + "ms")
-	}
+}

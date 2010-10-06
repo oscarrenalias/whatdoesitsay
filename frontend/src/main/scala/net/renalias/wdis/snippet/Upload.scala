@@ -23,67 +23,7 @@ import net.renalias.wdis.io.FileHelper._
 import net.renalias.wdis.model._
 import net.renalias.wdis.config._
 
-class Upload extends SimpleLogger {
-
-	// the request-local variable that hold the file parameter
-	private object theUpload extends RequestVar[Box[FileParamHolder]](Empty)
-
-	/**
-	 * Bind the appropriate XHTML to the form
-	 */
-	def upload(xhtml: Group): NodeSeq = {
-		
-		def saveFile(f: FileParamHolder) = {
-			
-			// svae the file to disk	
-			val fileName = FileHelper.randomName
-			f.file >>: new File(Config.getString("folders.incoming", "/tmp/incoming") + fileName)
-			
-			log.debug("Saving file " + f.fileName + " to " + fileName)
-			
-			// and create a new scanner job in the db
-			var job = ScanJob.create.
-				originalFileName(f.fileName).
-				internalFileName(fileName).
-				status(ScanJobStatus.New).
-				lang(ScanJobLang.ENG).
-				save			
-		}
-		
-		def isImage(f: FileParamHolder): Boolean = {
-			FileHelper.getExtension(f.fileName) match {
-				case None => false
-				case Some(x) if x=="png" || x=="jpg" || x=="jpeg" || x=="tif" || x=="tiff" => true
-				case _ => false
-			}
-		}
-		
-		if (S.get_?) bind("ul", chooseTemplate("choose", "get", xhtml),
-	                  	"file_upload" -> fileUpload(ul => theUpload(Full(ul))))
-		else {
-			
-			if(isImage(theUpload.is.get)) {
-			
-				// save the file to disk if provided
-				theUpload.is.map(f => saveFile(f))
-			
-				bind("ul", chooseTemplate("choose", "post", xhtml),
-		          "file_name" -> theUpload.is.map(v => Text(v.fileName)),
-		          "mime_type" -> theUpload.is.map(v => Box.legacyNullTest(v.mimeType).map(Text).openOr(Text("No mime type supplied"))), // Text(v.mimeType)),
-		          "length" -> theUpload.is.map(v => Text(v.file.length.toString)),
-		          "md5" -> theUpload.is.map(v => Text(hexEncode(md5(v.file)))))
-			}
-			else {
-				S.error("The file was not an image")
-				bind("ul", chooseTemplate("choose", "get", xhtml), "file_upload" -> fileUpload(ul => theUpload(Full(ul))))				
-			}
-		}
-	}
-}
-
 object UploadWizard extends Wizard with SimpleLogger {
-	  
-	object completeInfo extends WizardVar(false)
 	
 	def isImage(f: FileParamHolder): Boolean = {
 		FileHelper.getExtension(f.fileName) match {
@@ -91,7 +31,20 @@ object UploadWizard extends Wizard with SimpleLogger {
 			case Some(x) if x=="png" || x=="jpg" || x=="jpeg" || x=="tif" || x=="tiff" => true
 			case _ => false
 		}
-	}	
+	}
+	
+	lazy val incomingFolder = {
+		Config.getString("folders.incoming") match {
+			case None => throw new IllegalArgumentException("Missing folders.incoming parameter from configuration file")
+			case Some(x) => x
+		}
+	}
+	lazy val imageFolder = {
+		Config.getString("folders.static") match {
+			case None => throw new IllegalArgumentException("Missing folders.static parameter from configuration file")
+			case Some(x) => x
+		}
+	}
 
   	// define the first screen
   	val fileAndLanguageSelection = new Screen {
@@ -144,37 +97,40 @@ object UploadWizard extends Wizard with SimpleLogger {
   	// what to do on completion of the wizard
   	def finish() {
 		
-		def saveFile(f: FileParamHolder, lang:String) = {
+		def saveFile(f: FileParamHolder, jobId: String, lang:String) = {
 			
 			// svae the file to disk	
-			val fileName = FileHelper.randomName + "." + (FileHelper.getExtension(f.fileName) getOrElse "")
-			f.file >>: new File(Config.getString("folders.incoming", "/tmp/whatdoesitsay/incoming") + fileName)			
+			val fileName = jobId + "." + (FileHelper.getExtension(f.fileName) getOrElse "")
+			
+			f.file >>: new File(incomingFolder + fileName)			
 			log.debug("Saving file " + f.fileName + " to " + fileName)
 			
 			// and a copy to the static file folder
 			//val imagesFolder:String = Box(Config.getString("folders.images")) open_!	// this parameter must be configured, throw exeption otherwise 
-			f.file >>: new File(Config.getString("folders.images", "/tmp/whatdoesitsay/images") + fileName)
+			f.file >>: new File(imageFolder + fileName)
 			log.debug("Saving original image to static image folder")			
 			
 			// and create a new scanner job in the db
 			var job = ScanJob.create.
+				jobId(jobId).
 				originalFileName(f.fileName).
 				internalFileName(fileName).
 				status(ScanJobStatus.New).
 				lang(ScanJobLang.ENG).
+				createdDate(new Date).
 				save			
 		}
 	
 		fileAndLanguageSelection.file.is match {
-			case Full(f) => { 
-				saveFile(f, "ENG")
-				S.notice("File saved successfully!")
+			case Full(f) => {
+				val fileId = FileHelper.randomName
+				saveFile(f, fileId, "ENG")
+				// add a listener that will be waiting for our file to be processed
+								
+				// redirect processing to the page where we wait for the processing to be completed
+				S.seeOther("/document/" + fileId)
 			}
 			case _ => S.error("nothing was uploaded mate!")
 		}
-    	completeInfo.set(true)
-
-		// redirect processing to the page where we wait for the processing to be completed
-		S.seeOther("/document")
   	}
 }

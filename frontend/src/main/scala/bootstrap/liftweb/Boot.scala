@@ -11,7 +11,7 @@ import _root_.net.liftweb.mapper.{DB, ConnectionManager, Schemifier, DefaultConn
 import _root_.java.sql.{Connection, DriverManager}
 
 import net.renalias.wdis.model._
-import net.renalias.wdis.io.FolderWatcher
+import net.renalias.wdis.io.ScanJobMonitor
 
 /**
   * A class that's instantiated early and run.  It allows the application
@@ -38,7 +38,7 @@ class Boot {
     Schemifier.schemify(true, Schemifier.infoF _, ScanJob)
 
     // Build SiteMap
-    val entries = Menu(Loc("Home", List("index"), "Home")) :: Nil
+    val entries = Menu(Loc("Home", List("index"), "Home")) :: 
 				  Menu(Loc("View Document", List("document"), "View Document")) :: Nil
     LiftRules.setSiteMap(SiteMap(entries:_*))
 
@@ -54,12 +54,21 @@ class Boot {
     LiftRules.ajaxEnd =
       Full(() => LiftRules.jsArtifacts.hide("ajax-loader").cmd)
 
+	/**
+	 * Our own routing for handling /document/<number> URLs
+	 */
+	LiftRules.rewrite.append {
+		case RewriteRequest(ParsePath(List("document", documentNumber), _, _, _), _, _) => 
+				RewriteResponse("document" :: Nil, Map("documentId" -> documentNumber ))
+	}
+
     LiftRules.early.append(makeUtf8)
 
     S.addAround(DB.buildLoanWrapper)
 
 	// start the folder watcher thread
-	FolderWatcher.start
+	//FolderWatcher.start
+	ScanJobMonitor.start
   }
 
   /**
