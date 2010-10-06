@@ -6,7 +6,7 @@ class ConfigTestSuite extends FunSuite with ShouldMatchers {
 	import net.renalias.wdis.config.Config
 	
 	test("Config can return known values") {
-		Config.getString("folders.incoming").get should equal ("/tmp/whatdoesitsay/incoming/")
+		Config.getString("folders.incoming").get should equal ("../files/incoming/")
 	}
 	
 	test("Config returns default values if key is not found") {
