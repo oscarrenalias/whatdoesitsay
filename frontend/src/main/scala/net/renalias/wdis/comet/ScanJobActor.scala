@@ -75,8 +75,7 @@ class ScanJobActor extends CometActor with SimpleLogger {
 			log.debug("Job " + jobId + " notified as complete")
 			jobComplete = true
 			reRender(true)
-			//this ! ShutDown
-			theSession.removeCometActor(this) 
+			this ! ShutDown
 		}
 		case _ => log.error("ScanJobActor got a message that did not understand")
 	}
