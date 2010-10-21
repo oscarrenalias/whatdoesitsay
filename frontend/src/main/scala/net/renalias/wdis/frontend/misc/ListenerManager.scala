@@ -1,4 +1,4 @@
-package net.renalias.wdis.misc
+package net.renalias.wdis.frontend.misc
 
 import scala.actors._
 

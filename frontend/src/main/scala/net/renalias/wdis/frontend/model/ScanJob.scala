@@ -1,4 +1,4 @@
-package net.renalias.wdis.model
+package net.renalias.wdis.frontend.model
 
 import net.liftweb.mapper._
 

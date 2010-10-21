@@ -1,4 +1,4 @@
-package net.renalias.wdis.snippet
+package net.renalias.wdis.frontend.snippet
 
 import _root_.net.liftweb._
 import http._
@@ -17,11 +17,17 @@ import _root_.net.liftweb.common._
 
 import java.io.File
 import _root_.java.util.Date
-import net.renalias.wdis.logger.SimpleLogger
-import net.renalias.wdis.io._
-import net.renalias.wdis.io.FileHelper._
-import net.renalias.wdis.model._
-import net.renalias.wdis.config._
+import net.renalias.wdis.common.logger.SimpleLogger
+import net.renalias.wdis.common.io._
+import net.renalias.wdis.common.io.FileHelper._
+import net.renalias.wdis.frontend.model._
+import net.renalias.wdis.common.config.Config
+import net.renalias.wdis.common.messaging._
+import net.renalias.wdis.backend.server.BackendServer
+
+import se.scalablesolutions.akka.actor.Actor
+import se.scalablesolutions.akka.remote.{RemoteClient, RemoteNode}
+import Actor._
 
 object UploadWizard extends Wizard with SimpleLogger {
 	
@@ -110,7 +116,7 @@ object UploadWizard extends Wizard with SimpleLogger {
 			f.file >>: new File(imageFolder + fileName)
 			log.debug("Saving original image to static image folder")			
 			
-			// and create a new scanner job in the db
+			// and create a new scanning job in the db
 			var job = ScanJob.create.
 				jobId(jobId).
 				originalFileName(f.fileName).
@@ -118,7 +124,9 @@ object UploadWizard extends Wizard with SimpleLogger {
 				status(ScanJobStatus.New).
 				lang(ScanJobLang.ENG).
 				createdDate(new Date).
-				save			
+				save
+							
+			BackendServer ! NewScanRequest(jobId, fileName, "ENG")
 		}
 	
 		fileAndLanguageSelection.file.is match {

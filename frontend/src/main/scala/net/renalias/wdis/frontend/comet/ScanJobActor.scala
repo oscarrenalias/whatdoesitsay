@@ -1,4 +1,4 @@
-package net.renalias.wdis.comet
+package net.renalias.wdis.frontend.comet
 
 import scala.actors.Actor
 import scala.actors.Actor._
@@ -11,10 +11,10 @@ import _root_.scala.xml.{NodeSeq,Text,Node,Elem}
 import _root_.net.liftweb.common.{Box,Full,Empty}
 import net.liftweb.mapper._
 
-import net.renalias.wdis.logger.SimpleLogger
-import net.renalias.wdis.io._
-import net.renalias.wdis.misc._
-import net.renalias.wdis.model._
+import net.renalias.wdis.common.logger.SimpleLogger
+import net.renalias.wdis.common.io._
+import net.renalias.wdis.frontend.misc._
+import net.renalias.wdis.frontend.model._
 
 class ScanJobActor extends CometActor with SimpleLogger {
 	

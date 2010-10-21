@@ -1,4 +1,4 @@
-package net.renalias.wdis.io
+package net.renalias.wdis.common.io
 
 import _root_.net.liftweb._
 import mapper._
@@ -11,12 +11,12 @@ import scala.actors._
 
 import java.util.Date
 
-import net.renalias.wdis.misc._
-import net.renalias.wdis.model._
-import net.renalias.wdis.io._
-import net.renalias.wdis.logger.SimpleLogger
-import net.renalias.wdis.config.Config
-import net.renalias.wdis.comet.ScanJobActor
+import net.renalias.wdis.frontend.misc._
+import net.renalias.wdis.frontend.model._
+import net.renalias.wdis.common.io._
+import net.renalias.wdis.common.logger.SimpleLogger
+import net.renalias.wdis.common.config.Config
+import net.renalias.wdis.frontend.comet.ScanJobActor
 
 case class AddJobListener(val jobId:String, val s:ScanJobActor)
 case class RemoveJobListener(val jobId:String, val s:ScanJobActor)

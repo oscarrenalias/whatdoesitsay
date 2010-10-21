@@ -5,6 +5,17 @@ PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
 "http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app>
+	
+  <!-- Akka specific stuff -->
+  <!-- servlet>
+    <servlet-name>AkkaServlet</servlet-name>
+    <servlet-class>se.scalablesolutions.akka.comet.AkkaServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AkkaServlet</servlet-name>
+    <url-pattern>/*</url-pattern>
+  </servlet-mapping -->	
+	
 <filter>
   <filter-name>LiftFilter</filter-name>
   <display-name>Lift Filter</display-name>

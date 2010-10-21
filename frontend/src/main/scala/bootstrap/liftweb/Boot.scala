@@ -10,8 +10,9 @@ import Helpers._
 import _root_.net.liftweb.mapper.{DB, ConnectionManager, Schemifier, DefaultConnectionIdentifier, StandardDBVendor}
 import _root_.java.sql.{Connection, DriverManager}
 
-import net.renalias.wdis.model._
-import net.renalias.wdis.io.ScanJobMonitor
+import net.renalias.wdis.frontend.model._
+import net.renalias.wdis.common.io.ScanJobMonitor
+import net.renalias.wdis.frontend.server.FrontendServer
 
 /**
   * A class that's instantiated early and run.  It allows the application
@@ -32,7 +33,7 @@ class Boot {
     }	
 	
     // where to search snippet
-    LiftRules.addToPackages("net.renalias.wdis")
+    LiftRules.addToPackages("net.renalias.wdis.frontend")
 
 	// For mapper entities
     Schemifier.schemify(true, Schemifier.infoF _, ScanJob)
@@ -69,6 +70,8 @@ class Boot {
 	// start the folder watcher thread
 	//FolderWatcher.start
 	ScanJobMonitor.start
+	
+	FrontendServer.start
   }
 
   /**

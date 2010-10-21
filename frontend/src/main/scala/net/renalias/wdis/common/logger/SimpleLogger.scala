@@ -1,4 +1,4 @@
-package net.renalias.wdis.logger
+package net.renalias.wdis.common.logger
 
 import net.lag.logging.Logger
 

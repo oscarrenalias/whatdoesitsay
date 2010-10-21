@@ -1,4 +1,4 @@
-package net.renalias.wdis.io
+package net.renalias.wdis.common.io
 
 import net.liftweb.util.StringHelpers
 import java.io._

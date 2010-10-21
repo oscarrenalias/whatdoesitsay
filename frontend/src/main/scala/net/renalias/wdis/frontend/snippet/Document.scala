@@ -1,4 +1,4 @@
-package net.renalias.wdis.snippet
+package net.renalias.wdis.frontend.snippet
 
 import _root_.net.liftweb._
 import http._
@@ -15,10 +15,10 @@ import _root_.net.liftweb.http._
 import _root_.net.liftweb.wizard._
 import _root_.net.liftweb.common._
 
-import net.renalias.wdis.logger.SimpleLogger
-import net.renalias.wdis.io.FileHelper._
-import net.renalias.wdis.model._
-import net.renalias.wdis.config._
+import net.renalias.wdis.common.logger.SimpleLogger
+import net.renalias.wdis.common.io.FileHelper._
+import net.renalias.wdis.frontend.model._
+import net.renalias.wdis.common.config.Config
 
 class Document extends SimpleLogger {
 	

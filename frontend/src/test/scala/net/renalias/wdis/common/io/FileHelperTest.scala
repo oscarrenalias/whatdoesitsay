@@ -3,7 +3,7 @@ import org.scalatest.matchers.ShouldMatchers
  
 class FileHelperTestSuite extends FunSuite with ShouldMatchers {
 	
-	import net.renalias.wdis.io.FileHelper
+	import net.renalias.wdis.common.io.FileHelper
 	
 	test("getExtension returns the correct extension") {
 		FileHelper.getExtension("file.extension").get should equal ("extension")

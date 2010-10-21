@@ -3,7 +3,7 @@ import org.scalatest.matchers.ShouldMatchers
  
 class ConfigTestSuite extends FunSuite with ShouldMatchers {
 	
-	import net.renalias.wdis.config.Config
+	import net.renalias.wdis.common.config.Config
 	
 	test("Config can return known values") {
 		Config.getString("folders.incoming").get should equal ("../files/incoming/")

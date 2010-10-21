@@ -1,10 +1,10 @@
-package net.renalias.wdis.io
+package net.renalias.wdis.common.io
 
 import scala.actors._
 import java.io.File
-import net.renalias.wdis.misc.ListenerManager
-import net.renalias.wdis.logger._
-import net.renalias.wdis.config.Config
+import net.renalias.wdis.frontend.misc.ListenerManager
+import net.renalias.wdis.common.logger._
+import net.renalias.wdis.common.config.Config
 
 abstract class FilePatternMatcher(val pattern:String) {
 	def accept(file:String): Boolean
