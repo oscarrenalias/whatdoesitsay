@@ -16,15 +16,17 @@ class BackendActor extends Actor with Logging {
 	def receive = {
 		case NewScanRequest(jobId, fileName, lang) => {
 			log.info("Received NewScanRequest message - jobId = " + jobId + ", fileName = " + fileName)
+
+			val processor = new ScanRequestProcessor(fileName, lang)			
+			val response = processor.process match {
+				case Right(text) => ScanRequestCompleted(jobId, text)
+				case Left(ex) => {
+					log.error("ScanRequestProcessor returned an error:" + ex.toString)
+					ScanRequestError(jobId, ex.toString)
+				}
+			}
 			
-			// reply with something...
-			/*val actor = RemoteClient.actorFor(
-				net.renalias.wdis.common.messaging.Constants.RESPONSE_SERVICE_NAME,
-				Config.getString("akka.backend.host", "localhost"), 
-				Config.getInt("akka.backend.port", 9999))
-			val result = actor ! ScanRequestCompleted(jobId, "this is the text")*/
-			
-			FrontendServer ! ScanRequestCompleted(jobId, "this is the text")
+			FrontendServer ! response
 		}
 		case Echo(msg) => self.reply("Backend Server - Echoing message: " + msg)
 		case _ => log.error("BackEndActor received a message that it did not understand")
