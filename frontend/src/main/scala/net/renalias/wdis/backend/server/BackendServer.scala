@@ -11,6 +11,7 @@ import se.scalablesolutions.akka.util.Logging
 import Actor._
 
 import net.renalias.wdis.frontend.server.FrontendServer
+import net.liftweb.common.{Full, Failure}
 
 class BackendActor extends Actor with Logging {
 	def receive = {
@@ -19,8 +20,8 @@ class BackendActor extends Actor with Logging {
 
 			val processor = new ScanRequestProcessor(fileName, lang)			
 			val response = processor.process match {
-				case Right(text) => ScanRequestCompleted(jobId, text)
-				case Left(ex) => {
+				case Full(text) => ScanRequestCompleted(jobId, text)
+				case Failure(msg, ex, _) => {
 					log.error("ScanRequestProcessor returned an error:" + ex.toString)
 					ScanRequestError(jobId, ex.toString)
 				}
