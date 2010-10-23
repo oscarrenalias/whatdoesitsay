@@ -1,9 +1,11 @@
+import java.io.File
 import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
  
 class FileHelperTestSuite extends FunSuite with ShouldMatchers {
 	
 	import net.renalias.wdis.common.io.FileHelper
+	import net.renalias.wdis.common.io.FileHelper._
 	
 	test("getExtension returns the correct extension") {
 		FileHelper.getExtension("file.extension").get should equal ("extension")
@@ -15,5 +17,10 @@ class FileHelperTestSuite extends FunSuite with ShouldMatchers {
 	
 	test("getExtension returns None if the file has no extension but a dot at the end of the name") {
 		FileHelper.getExtension("noextension.") should equal (None)
-	}	
+	}
+
+	test("Reading files works") {
+		val f = new File("./src/test/resources/testfile.txt")
+		f.read("UTF-8") should equal ("file contents")
+	}
 }

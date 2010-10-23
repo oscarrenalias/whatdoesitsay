@@ -1,14 +1,20 @@
 package net.renalias.wdis.common.io
 
 import net.liftweb.util.StringHelpers
-import java.io._
 
-class FileHelper(file : File) {
+import java.io._
+import java.util.Scanner
+
+class FileHelper(val file : File) {
 	// saves data to the given file in binary format
   	def >>: (data: Array[Byte]): Unit = {
 		val fos = new FileOutputStream(file)
 		fos.write(data)
 	}
+	
+	def read(encoding:String = "UTF-8") = scala.io.Source.fromFile(file, encoding).mkString
+
+	def read = scala.io.Source.fromFile(file).mkString
 }
 
 object FileHelper {
