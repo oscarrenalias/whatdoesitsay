@@ -34,6 +34,11 @@ trait TesseractScanner extends AbstractScanner with SimpleLogger {
 			case ex:Exception => Failure(ex.toString, Full(ex), Empty)
 		}
 
+		// delete the output file if it exists
+		val f = new File(outFile)
+		if(f.exists)
+			f.delete
+
 		result
 	}
 	
