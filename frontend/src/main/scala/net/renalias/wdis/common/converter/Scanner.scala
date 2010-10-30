@@ -46,7 +46,7 @@ trait TesseractScanner extends AbstractScanner with SimpleLogger {
 		val f = new File(file)
 		val contents = f.read
 
-		log.debug("contents of file: " + file + " ==>" + contents)
+		log.debug("contents of scanned file: " + file + " ==>" + contents)
 
 		contents
 	}
