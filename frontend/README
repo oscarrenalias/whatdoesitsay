@@ -1,0 +1,15 @@
+In order to build and run this application, you are first going to need jteigen's ScalaTest plugin for Maven, which you
+can find here:
+
+    http://github.com/teigen/maven-scalatest-plugin
+
+Just clone the repository, and then run
+
+    mvn clean install
+
+Then run the following commands:
+
+    mvn scala:run -Dlauncher=backendServer (to run the backend server)
+    mvn jetty:run (to run the frontend application)
+
+After these, you're good to go.
