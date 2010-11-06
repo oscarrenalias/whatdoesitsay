@@ -19,7 +19,7 @@ trait TesseractScanner extends AbstractScanner with Logger {
 		val outFile = file + ".txt"
 
 		// we don't use outFile here because tesseract appends .txt automatically
-		val scan = Config.getString("tools.tesseract", "") + " " + file + " " + file + " -l " + lang
+		val scan = Config.getString_!("tools.tesseract") + " " + file + " " + file + " -l " + lang
 		val result = try {
 			debug("Tesseract processing file: " + file)
 			debug("command: " + scan)

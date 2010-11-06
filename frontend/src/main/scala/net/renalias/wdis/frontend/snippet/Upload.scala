@@ -28,18 +28,8 @@ object UploadWizard extends Wizard with Logger {
 		}
 	}
 
-	lazy val incomingFolder = {
-		Config.getString("folders.incoming") match {
-			case None => throw new IllegalArgumentException("Missing folders.incoming parameter from configuration file")
-			case Some(x) => x
-		}
-	}
-	lazy val imageFolder = {
-		Config.getString("folders.static") match {
-			case None => throw new IllegalArgumentException("Missing folders.static parameter from configuration file")
-			case Some(x) => x
-		}
-	}
+	lazy val incomingFolder = Config.getString_!("folders.incoming")	
+	lazy val imageFolder = Config.getString_!("folders.static")
 
 	// define the first screen
 	val fileAndLanguageSelection = new Screen {

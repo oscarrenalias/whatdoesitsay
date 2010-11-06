@@ -1,10 +1,8 @@
 package net.renalias.wdis.frontend.model
 
-import net.liftweb.util.FieldError
 import net.liftweb.couchdb._
 import net.liftweb.record.field._
 import net.liftweb.common._
-import net.liftweb.json.JsonAST.{JField, JInt, JObject, JString, render}
 import java.util.Calendar
 import net.renalias.wdis.common.config.Config
 
@@ -29,7 +27,7 @@ class ScanJob extends CouchRecord[ScanJob] {
 	object completedDate extends OptionalDateTimeField(this)
 	object text extends OptionalTextareaField(this, 999999) // TODO: check if we can have a field of unlimited size here
 
-	def internalFilePath = Config.getString("folders.incoming", "") + "/" + internalFileName.value
+	def internalFilePath = Config.getString_!("folders.incoming") + "/" + internalFileName.value
  }
 
 object ScanJob extends ScanJob with CouchMetaRecord[ScanJob] {

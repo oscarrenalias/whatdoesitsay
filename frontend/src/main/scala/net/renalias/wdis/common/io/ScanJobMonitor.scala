@@ -32,7 +32,7 @@ object ScanJobMonitor extends ListenerManager with LiftLogger with Actor {
 		}
 		
 	def getJobText(jobId:String): String = {
-		val fileName = Config.getString("folders.completed", ".") + jobId + ".txt"
+		val fileName = Config.getString_!("folders.completed") + jobId + ".txt"
 		var fileContents = ""
 		
 		for {  
