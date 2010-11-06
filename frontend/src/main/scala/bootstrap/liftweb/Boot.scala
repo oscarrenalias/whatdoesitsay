@@ -14,6 +14,8 @@ import net.renalias.wdis.frontend.model._
 import net.renalias.wdis.common.io.ScanJobMonitor
 import net.renalias.wdis.frontend.server.FrontendServer
 import net.renalias.wdis.common.couchdb.Database
+import net.renalias.wdis.backend.server.BackendServer
+import net.renalias.wdis.common.config.Config
 
 /**
   * A class that's instantiated early and run.  It allows the application
