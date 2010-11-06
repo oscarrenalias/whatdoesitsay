@@ -1,3 +1,5 @@
+import java.util.Date
+import net.renalias.wdis.frontend.model.{ScanJob, ScanJobLang, ScanJobStatus}
 import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
 
@@ -22,6 +24,15 @@ class BackendServerTest extends FunSuite with ShouldMatchers {
 	
 	test("The server is able to generate errors correctly") {
 		// send a message to the backend server
-		BackendServer ! NewScanRequest("jobId", "fileName", "lang")
+
+		/*val job = ScanJob.create.
+							jobId("1").
+							originalFileName("original-filename.jpg").
+							internalFileName("internal-file-name.jpg").
+							status(ScanJobStatus.New).
+							lang(ScanJobLang.ENG).
+							createdDate(new Date)
+
+		BackendServer ! NewScanRequest(job)*/
 	}
 }

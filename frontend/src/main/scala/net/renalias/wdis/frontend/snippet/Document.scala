@@ -2,43 +2,29 @@ package net.renalias.wdis.frontend.snippet
 
 import _root_.net.liftweb._
 import http._
-import mapper._
-import S._
-import SHtml._
-
-import common._
 import util._
 import Helpers._
 
 import _root_.scala.xml.{NodeSeq, Text, Group}
 import _root_.net.liftweb.http._
-import _root_.net.liftweb.wizard._
 import _root_.net.liftweb.common._
 
-import net.renalias.wdis.common.logger.SimpleLogger
-import net.renalias.wdis.common.io.FileHelper._
 import net.renalias.wdis.frontend.model._
-import net.renalias.wdis.common.config.Config
 
-class Document extends SimpleLogger {
-	
-	def showDocument(xhtml: NodeSeq): NodeSeq = {
-		
-		lazy val errorNotFound = Text("The document could not be found")
-		
-		S.param("documentId") match {
+class Document extends Logger {
+
+	lazy val errorNotFound = Text("The document could not be found")
+
+	def documentInfo(xhtml: NodeSeq, docId: Box[String]): NodeSeq = {
+		docId match {
 			case Full(docId) => {
-				// load the job from the db
-				ScanJob.find(By(ScanJob.jobId, docId)) match {
-					case Full(job) if(job.status.is != ScanJobStatus.Completed) => {
-						log.debug("docId = " + docId)
+				ScanJob.fetch(docId) match {
+					case Full(job) if (job.status.value != ScanJobStatus.Completed) => {
+						debug("docId = " + docId)
 						<lift:comet type="ScanJobActor" name={docId}/>
 					}
-					case Full(job) if(job.status.is == ScanJobStatus.Completed) => {
-						//Text("job: " + job.jobId.is + " - status: " + job.status.is + "-text:" + job.text.is)
-						//<lift:embed what="/templates-hidden/job-data" />
-						bind("document", xhtml, "id" -> job.jobId.is, "status" -> job.status.is.toString, "text" -> job.text.is)
-						//bind("document", xhtml, "id" -> "job.jobId.is", "status" -> "job.status.is", "text" -> "job.text.is")
+					case Full(job) if (job.status.value == ScanJobStatus.Completed) => {
+						bind("document", xhtml, "id" -> job.id.value.get, "status" -> job.status.value.toString, "text" -> job.text.value.getOrElse(""))
 					}
 					case _ => errorNotFound
 				}
@@ -46,4 +32,6 @@ class Document extends SimpleLogger {
 			case _ => errorNotFound
 		}
 	}
+
+	def showDocument(xhtml: NodeSeq) = documentInfo(xhtml, S.param("documentId"))
 }

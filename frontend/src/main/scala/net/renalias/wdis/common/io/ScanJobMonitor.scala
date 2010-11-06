@@ -1,28 +1,25 @@
 package net.renalias.wdis.common.io
 
 import _root_.net.liftweb._
-import mapper._
-import common._
+import common.{Full, Logger => LiftLogger}
 import util._
-import Helpers._
 
 import scala.io.Source
 import scala.actors._
 
-import java.util.Date
+import java.util.Calendar
 
 import net.renalias.wdis.frontend.misc._
 import net.renalias.wdis.frontend.model._
-import net.renalias.wdis.common.io._
-import net.renalias.wdis.common.logger.SimpleLogger
 import net.renalias.wdis.common.config.Config
 import net.renalias.wdis.frontend.comet.ScanJobActor
+
 
 case class AddJobListener(val jobId:String, val s:ScanJobActor)
 case class RemoveJobListener(val jobId:String, val s:ScanJobActor)
 case class JobCompleted(val jobId:String)
 
-object ScanJobMonitor extends ListenerManager with SimpleLogger with Actor {
+object ScanJobMonitor extends ListenerManager with LiftLogger with Actor {
 	
 	// register as a listener with the folder watcher
 	FolderWatcher.start
@@ -41,28 +38,30 @@ object ScanJobMonitor extends ListenerManager with SimpleLogger with Actor {
 		for {  
 		    (line) <- Source.fromFile(fileName).getLines  
 		} fileContents += line		
-		
-		log.debug("job:" + jobId + " - text:" + fileContents)
+
+		debug("job:" + jobId + " - text:" + fileContents)
 		
 		fileContents
 	}
 	
 	def processJob(jobFile:String) = {
 		val jobId = getJobIdFromFile(jobFile)
-		log.debug("Processing job = " + jobFile)
+		debug("Processing job = " + jobFile)
 		
 		// update the job in the database
-		ScanJob.find(By(ScanJob.jobId, jobId)) match {
+		//ScanJob.find(By(ScanJob.jobId, jobId)) match {
+		ScanJob.fetch(jobId) match {
 			case Full(job) => {
 				// get the contents of the text file and update the status
-				job.status(ScanJobStatus.Completed).
-				text(getJobText(jobId)).
-				completedDate(new Date).
-				save 
+				//job.status.set(ScanJobStatus.Completed).
+				job.status.set(ScanJobStatus.Completed)
+				job.text.set(Full(getJobText(jobId)))
+				job.completedDate(Calendar.getInstance)			
+				job.save 
 				// notify listeners
 				notify(JobCompleted(jobId))
 			}
-			case _ => log.error("There was no matching job with id = " + jobId)
+			case _ => error("There was no matching job with id = " + jobId)
 		}
 		
 		// and notify the comet actor who may be waiting for this
@@ -73,20 +72,20 @@ object ScanJobMonitor extends ListenerManager with SimpleLogger with Actor {
 		loop {
 			react {
 				case FilesAdded(files) => {
-					log.debug("FilesAdded message received")
+					debug("FilesAdded message received")
 					files.foreach(f => processJob(f))
 				}
-				case FilesRemoved(_) => log.debug("FilesRemoved message received")
+				case FilesRemoved(_) => debug("FilesRemoved message received")
 				// messages to add and remove listeners
 				case AddJobListener(jobId, s) => {
-					log.debug("Adding listener for jobId: " + jobId)
+					debug("Adding listener for jobId: " + jobId)
 					addListener(s)
 				}
 				case RemoveJobListener(jobId, s) => {
-					log.debug("Removing listener for jobId: " + jobId)
+					debug("Removing listener for jobId: " + jobId)
 					removeListener(s)
 				}
-				case _ => log.debug("We can ignore this message")
+				case _ => debug("We can ignore this message")
 			}
 		}
 	}

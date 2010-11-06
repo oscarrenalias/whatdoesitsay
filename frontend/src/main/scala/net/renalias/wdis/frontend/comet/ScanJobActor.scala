@@ -1,22 +1,14 @@
 package net.renalias.wdis.frontend.comet
 
-import scala.actors.Actor
-import scala.actors.Actor._
 import net.liftweb.http.CometActor
-import net.liftweb.http.S
-import net.liftweb.http.ShutDown
-import _root_.net.liftweb.util.Log
 import _root_.net.liftweb.util.Helpers._
 import _root_.scala.xml.{NodeSeq,Text,Node,Elem}
-import _root_.net.liftweb.common.{Box,Full,Empty}
-import net.liftweb.mapper._
-
 import net.renalias.wdis.common.logger.SimpleLogger
 import net.renalias.wdis.common.io._
-import net.renalias.wdis.frontend.misc._
 import net.renalias.wdis.frontend.model._
+import net.liftweb.common.{Logger, Box, Full, Empty}
 
-class ScanJobActor extends CometActor with SimpleLogger {
+class ScanJobActor extends CometActor with Logger {
 	
 	override def defaultPrefix = Box("Job")
 	
@@ -33,15 +25,16 @@ class ScanJobActor extends CometActor with SimpleLogger {
 
 	// retrieves the job identifier
 	def jobId = name match {
-		case Empty => log.warning("Empty jobId for actor!"); "" 
-		case Full(x) => log.debug("Actor jobId: " + x); x
+		case Empty => warning("Empty jobId for actor!"); ""
+		case Full(x) => debug("Actor jobId: " + x); x
 	}
 
 	def render = {
-		ScanJob.find(By(ScanJob.jobId, jobId)) match {
+		//ScanJob.find(By(ScanJob.jobId, jobId)) match {
+		ScanJob.fetch(jobId) match {
 			case Full(job) if(job.status.is != ScanJobStatus.Completed) => {
-				log.debug("Job " + jobId + "isn't ready yet, setting up the actor...")
-				Text("job: " + job.jobId.is + " - status: " + job.status.is)
+				debug("Job " + jobId + "isn't ready yet, setting up the actor...")
+				Text("job: " + job.id.is + " - status: " + job.status.is)
 			}
 			case Full(job) if(job.status.is == ScanJobStatus.Completed) => {
 				//log.debug("Job " + jobId + "is already completed, not need to set up the actor")
@@ -53,22 +46,22 @@ class ScanJobActor extends CometActor with SimpleLogger {
 	}
 	
 	override def localSetup = {
-		log.debug("Starting comet actor: " + {jobId})		
+		debug("Starting comet actor: " + {jobId})
 		ScanJobMonitor ! AddJobListener(jobId, this)
 	}
 	
 	override def localShutdown = {
-		log.debug("Shutting down comet actor: " + {jobId})
+		debug("Shutting down comet actor: " + {jobId})
 		ScanJobMonitor ! RemoveJobListener(jobId, this)		
 	}
 	
 	override def lowPriority = {
 		case JobCompleted(jobId) => {
-			log.debug("Job " + jobId + " notified as complete")
+			debug("Job " + jobId + " notified as complete")
 			jobComplete = true
 			reRender(devMode)			
 			ScanJobMonitor ! RemoveJobListener(jobId, this)			
 		}
-		case _ => log.error("ScanJobActor got a message that did not understand")
+		case _ => error("ScanJobActor got a message that did not understand")
 	}
 }

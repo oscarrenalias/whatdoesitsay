@@ -30,5 +30,5 @@ object FileHelper {
 			case x:Int if x==(fileName.length-1) => None
 			case x:Int => new Some(fileName.substring(x+1).toLowerCase)
 		}		
-	}
+	}	
 }

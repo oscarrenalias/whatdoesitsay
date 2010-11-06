@@ -1,25 +1,23 @@
 package net.renalias.wdis.common.converter
 
-import net.liftweb.common.{Box, Failure, Full, Empty}
-
-import net.renalias.wdis.common.logger.SimpleLogger
 import net.renalias.wdis.common.config.Config
+import net.renalias.wdis.common.io.FileHelper
 
 import xsbt.Process
-import xsbt.Process._
+import net.liftweb.common._
 
 trait AbstractConverter {
 	def convert(file: String, toFile: String): Box[String]
 }
 
-trait ImageMagickConverter extends AbstractConverter with SimpleLogger {
+trait ImageMagickConverter extends AbstractConverter with Logger {
 	override def convert(file: String, toFile: String) = {
 		
 		// FIXME
 		val convert = Config.getString("tools.convert", "") + " " + file + " " + toFile
 		val result = try {
-			log.debug("ImageMagick converting file: " + file)
-			log.debug("command: " + convert)
+			debug("ImageMagick converting file: " + file)
+			debug("command: " + convert)
 			
 			val pb = Process(convert)
 			pb ! match {
@@ -38,5 +36,33 @@ object ImageConverter extends ImageMagickConverter {
 	def apply(file: String, toFile: String) = {
 		val converter = new Object with ImageMagickConverter
 		converter.convert(file, toFile)
+	}
+}
+
+trait ImageFileChecker {
+
+	// list of formats that need no conversion
+	private val NO_CONVERSION = List( "tif", "tiff" )
+	// list of accepted formats
+	private val SUPPORTED_FORMATS = List("jpg", "jpeg", "tiff", "tif", "png" )
+
+	/**
+	 * Checks if the given image file requires conversion
+	 */
+	def isConversionNeeded(file: String) = {
+		FileHelper.getExtension(file) match {
+			case Some(ext) => !NO_CONVERSION.contains(ext.toLowerCase)
+			case None => true
+		}
+	}
+
+	/**
+	 * Checks if the image format is supported
+	 */
+	def isSupported(file: String) = {
+		FileHelper.getExtension(file) match {
+			case Some(ext) => SUPPORTED_FORMATS.contains(ext.toLowerCase)
+			case None => false
+		}
 	}
 }

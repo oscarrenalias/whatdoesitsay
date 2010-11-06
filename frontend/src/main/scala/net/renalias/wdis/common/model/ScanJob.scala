@@ -1,29 +1,45 @@
 package net.renalias.wdis.frontend.model
 
-import net.liftweb.mapper._
-
-object ScanJobStatus extends Enumeration {
-	val New, InProgress, Ready, Completed, Error = Value
-}
+import net.liftweb.util.FieldError
+import net.liftweb.couchdb._
+import net.liftweb.record.field._
+import net.liftweb.common._
+import net.liftweb.json.JsonAST.{JField, JInt, JObject, JString, render}
+import java.util.Calendar
+import net.renalias.wdis.common.config.Config
 
 object ScanJobLang extends Enumeration {
 	val ENG, FIN, SPA, FRA, DEU = Value
 }
 
-class ScanJob extends LongKeyedMapper[ScanJob] with IdPK {
-	def getSingleton = ScanJob
-	
-	object jobId extends MappedString(this, 100)
-	object description extends MappedPoliteString(this, 250)
-	object originalFileName extends MappedString(this, 256)
-	object internalFileName extends MappedString(this, 256)
-	object lang extends MappedEnum(this, ScanJobLang)
-	object status extends MappedEnum(this, ScanJobStatus)
-	object createdDate extends MappedDateTime(this)
-	object completedDate extends MappedDateTime(this)
-	object text extends MappedText(this)
+object ScanJobStatus extends Enumeration {
+	type ScanJobStatus = Value 
+	val New, InProgress, Ready, Completed, Error = Value
 }
 
-object ScanJob extends ScanJob with LongKeyedMetaMapper[ScanJob] {
-	
+class ScanJob extends CouchRecord[ScanJob] {
+  def meta = ScanJob
+
+	object description extends OptionalStringField(this, 250)
+	object originalFileName extends StringField(this, 250)
+	object internalFileName extends StringField(this, 250)
+	object lang extends EnumField(this, ScanJobLang)
+	object status extends EnumField(this, ScanJobStatus)
+	object createdDate extends DateTimeField(this, Calendar.getInstance)
+	object completedDate extends OptionalDateTimeField(this)
+	object text extends OptionalTextareaField(this, 999999) // TODO: check if we can have a field of unlimited size here
+
+	def internalFilePath = Config.getString("folders.incoming", "") + "/" + internalFileName.value
+ }
+
+object ScanJob extends ScanJob with CouchMetaRecord[ScanJob] {
+  //def createRecord = new ScanJob
+
+  def findAll: List[ScanJob] = {
+    val viewReturn = ScanJob.queryView("scanjob", "scanjob_findAll")
+    viewReturn match {
+      case Full(v) =>  return v.toList
+      case Empty => return Nil
+    }
+  }
 }

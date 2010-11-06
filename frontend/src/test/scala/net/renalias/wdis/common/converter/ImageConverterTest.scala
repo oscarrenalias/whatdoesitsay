@@ -48,5 +48,23 @@ class ImageConverterTest extends FunSuite with ShouldMatchers {
 			}
 			case _ => fail
 		} 
-	}	
+	}
+
+	test("The system is able to tell which image files need conversion and which don't") {
+		val checker = new Object with ImageFileChecker
+		checker.isConversionNeeded("whatever.jpg") should be(true)
+		checker.isConversionNeeded("whatever.JpeG") should be(true)
+		checker.isConversionNeeded("whatever.png") should be(true)
+		checker.isConversionNeeded("whatever.PNg") should be(true)
+		checker.isConversionNeeded("whatever.tif") should be(false)
+		checker.isConversionNeeded("whatever.TifF") should be(false)
+	}
+
+	test("The system is able to tell if an image format is supported or not") {
+		val checker = new Object with ImageFileChecker
+		checker.isSupported("whatever.jpg") should be(true)
+		checker.isSupported("whatever.jpeG") should be(true)
+		checker.isSupported("whatever.tif") should be(true)
+		checker.isSupported("whatever.zxc") should be(false)
+	}
 }

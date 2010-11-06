@@ -5,6 +5,7 @@ import java.io.File
 import net.renalias.wdis.frontend.misc.ListenerManager
 import net.renalias.wdis.common.logger._
 import net.renalias.wdis.common.config.Config
+import net.liftweb.common.Logger
 
 abstract class FilePatternMatcher(val pattern:String) {
 	def accept(file:String): Boolean
@@ -33,7 +34,7 @@ abstract class FolderWatcherEvent(val files: List[String])
 case class FilesAdded(override val files: List[String]) extends FolderWatcherEvent(files)
 case class FilesRemoved(override val files: List[String]) extends FolderWatcherEvent(files)
 
-class FolderWatcher(val folder: Folder, val delay:Int = 5000) extends Actor with ListenerManager with SimpleLogger {
+class FolderWatcher(val folder: Folder, val delay:Int = 5000) extends Actor with ListenerManager with Logger {
 	var previous, now: List[String] = List()
 	
 	def act() {		
@@ -46,8 +47,8 @@ class FolderWatcher(val folder: Folder, val delay:Int = 5000) extends Actor with
 			val deleted = previous filterNot (now contains)
 			
 			// debug information
-			if(added.nonEmpty) log.debug("Added files: " + added.mkString("\n"))
-			if(deleted.nonEmpty) log.debug("Deleted files: " + deleted.mkString("\n"))			
+			if(added.nonEmpty) debug("Added files: " + added.mkString("\n"))
+			if(deleted.nonEmpty) debug("Deleted files: " + deleted.mkString("\n"))			
 			
 			// notify the listeners
 			added.nonEmpty match {
@@ -71,6 +72,6 @@ class FolderWatcher(val folder: Folder, val delay:Int = 5000) extends Actor with
 object FolderWatcher extends FolderWatcher(
 	new Folder(Config.getString("folders.completed", ".")), 
 	Integer.parseInt(Config.getString("watcher.frequency", "5000"))) 
-	with SimpleLogger {
-		log.info("FolderWatcher starting - folder = " + folder.toString + ", poll frequency = " + delay + "ms")
+	with Logger {
+		info("FolderWatcher starting - folder = " + folder.toString + ", poll frequency = " + delay + "ms")
 }

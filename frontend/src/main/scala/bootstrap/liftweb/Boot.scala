@@ -13,6 +13,7 @@ import _root_.java.sql.{Connection, DriverManager}
 import net.renalias.wdis.frontend.model._
 import net.renalias.wdis.common.io.ScanJobMonitor
 import net.renalias.wdis.frontend.server.FrontendServer
+import net.renalias.wdis.common.couchdb.Database
 
 /**
   * A class that's instantiated early and run.  It allows the application
@@ -35,8 +36,8 @@ class Boot {
     // where to search snippet
     LiftRules.addToPackages("net.renalias.wdis.frontend")
 
-	// For mapper entities
-    Schemifier.schemify(true, Schemifier.infoF _, ScanJob)
+	// For mapper entities - not needed if we're using couchdb
+    //Schemifier.schemify(true, Schemifier.infoF _, ScanJob)
 
     // Build SiteMap
     val entries = Menu(Loc("Home", List("index"), "Home")) :: 
@@ -67,11 +68,11 @@ class Boot {
 
     S.addAround(DB.buildLoanWrapper)
 
-	// start the folder watcher thread
-	//FolderWatcher.start
-	ScanJobMonitor.start
-	
-	FrontendServer.start
+	  // start CouchDB
+	  Database.setup
+
+	   // start the frontend server
+		FrontendServer.start
   }
 
   /**

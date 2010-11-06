@@ -1,34 +1,36 @@
 package net.renalias.wdis.common.converter
 
-import net.liftweb.common.{Box, Failure, Full, Empty}
-
 import net.renalias.wdis.common.logger.SimpleLogger
 import net.renalias.wdis.common.config.Config
 import net.renalias.wdis.common.io.FileHelper._
 
 import xsbt.Process
 import java.io.File
+import net.liftweb.common._
 
 trait AbstractScanner {
 	def scan(file: String, lang: String): Box[String]
 }
 
-trait TesseractScanner extends AbstractScanner with SimpleLogger {
+trait TesseractScanner extends AbstractScanner with Logger {
 	override def scan(file: String, lang: String) = {
-		log.debug("Scanning file: " + file)
+		debug("Scanning file: " + file)
 
 		val outFile = file + ".txt"
 
 		// we don't use outFile here because tesseract appends .txt automatically
 		val scan = Config.getString("tools.tesseract", "") + " " + file + " " + file + " -l " + lang
 		val result = try {
-			log.debug("Tesseract processing file: " + file)
-			log.debug("command: " + scan)
+			debug("Tesseract processing file: " + file)
+			debug("command: " + scan)
 
 			val pb = Process(scan)
 			pb ! match {
 				case 0 => Full(text(outFile))
-				case _ => Failure("Execution unsuccesful", Full(new Exception("Execution unsuccessful")), Empty)
+				case _ => {
+					error("There was an error executing Tesseract")
+					Failure("Execution unsuccesful", Full(new Exception("Execution unsuccessful")), Empty)
+				}
 			}
 		} catch {			
 			case ex:Exception => Failure(ex.toString, Full(ex), Empty)
@@ -46,7 +48,7 @@ trait TesseractScanner extends AbstractScanner with SimpleLogger {
 		val f = new File(file)
 		val contents = f.read
 
-		log.debug("contents of scanned file: " + file + " ==>" + contents)
+		debug("contents of scanned file: " + file + " ==>" + contents)
 
 		contents
 	}
