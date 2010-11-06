@@ -30,5 +30,12 @@ object FileHelper {
 			case x:Int if x==(fileName.length-1) => None
 			case x:Int => new Some(fileName.substring(x+1).toLowerCase)
 		}		
-	}	
+	}
+
+	def getFileName(fileName:String): String = {
+		fileName.lastIndexOf('.') match {
+			case -1 => fileName
+			case x:Int => fileName.substring(0, x)
+		}
+	}
 }
