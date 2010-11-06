@@ -245,6 +245,12 @@
 					<contextPath>/</contextPath>
 					<!-- scanIntervalSeconds>0</scanIntervalSeconds -->
 					<scanIntervalSeconds>5</scanIntervalSeconds>
+                    <systemProperties>
+                        <systemProperty>
+                            <name>JAVA_OPTIONS</name>
+                            <value>-XX:+CMSPermGenSweepingEnabled -XX:+CMSClassUnloadingEnabled -XX:PermSize=64M -XX:MaxPermSize=128M</value>
+                        </systemProperty>
+                    </systemProperties>
 				</configuration>
 			</plugin>
 			<plugin>
