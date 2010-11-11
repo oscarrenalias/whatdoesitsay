@@ -28,7 +28,7 @@
     <orderEntry type="library" name="Maven: net.liftweb:lift-actor_2.8.0:2.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: net.liftweb:lift-common_2.8.0:2.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.scala-lang:scala-library:2.8.0" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.6.0" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.5.11" level="project" />
     <orderEntry type="library" name="Maven: log4j:log4j:1.2.14" level="project" />
     <orderEntry type="library" name="Maven: net.liftweb:lift-json_2.8.0:2.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.thoughtworks.paranamer:paranamer:2.0" level="project" />
@@ -57,36 +57,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.scala-lang:scala-compiler:2.8.0" level="project" />
     <orderEntry type="library" name="Maven: net.lag:configgy:1.5.5" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.scalatest:scalatest:1.2" level="project" />
-    <orderEntry type="library" name="Maven: se.scalablesolutions.akka:akka-core_2.8.0:0.10" level="project" />
-    <orderEntry type="library" name="Maven: org.multiverse:multiverse-alpha:0.6" level="project" />
-    <orderEntry type="library" name="Maven: org.multiverse:multiverse-core:0.6" level="project" />
-    <orderEntry type="library" name="Maven: org.multiverse:multiverse-instrumentation:0.6" level="project" />
-    <orderEntry type="library" name="Maven: asm:asm:3.2" level="project" />
-    <orderEntry type="library" name="Maven: asm:asm-tree:3.2" level="project" />
-    <orderEntry type="library" name="Maven: asm:asm-analysis:3.2" level="project" />
-    <orderEntry type="library" name="Maven: asm:asm-commons:3.2" level="project" />
-    <orderEntry type="library" name="Maven: asm:asm-util:3.2" level="project" />
-    <orderEntry type="library" name="Maven: asm:asm-all:3.2" level="project" />
-    <orderEntry type="library" name="Maven: com.google.protobuf:protobuf-java:2.3.0" level="project" />
-    <orderEntry type="library" name="Maven: org.guiceyfruit:guice-all:2.0" level="project" />
-    <orderEntry type="library" name="Maven: jsr166x:jsr166x:1.0" level="project" />
-    <orderEntry type="library" name="Maven: commons-io:commons-io:1.4" level="project" />
-    <orderEntry type="library" name="Maven: aopalliance:aopalliance:1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-core-asl:1.2.1" level="project" />
-    <orderEntry type="library" name="Maven: sjson.json:sjson:0.7-2.8.0" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.aspectwerkz:aspectwerkz-nodeps-jdk5:2.2.1" level="project" />
-    <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:0.9.24" level="project" />
-    <orderEntry type="library" name="Maven: jgroups:jgroups:2.9.0.GA" level="project" />
-    <orderEntry type="library" name="Maven: org.fusesource.hawtdispatch:hawtdispatch-scala:1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.fusesource.hawtdispatch:hawtdispatch:1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.geronimo.specs:geronimo-jta_1.1_spec:1.1.1" level="project" />
-    <orderEntry type="library" name="Maven: voldemort.store.compress:h2-lzf:1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jboss.netty:netty:3.2.1.Final" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.aspectwerkz:aspectwerkz-jdk5:2.2.1" level="project" />
-    <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:0.9.24" level="project" />
-    <orderEntry type="library" name="Maven: sbinary:sbinary:2.8.0-0.3.1" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.2.1" level="project" />
-    <orderEntry type="library" name="Maven: net.databinder:dispatch-json_2.8.0:0.7.4" level="project" />
   </component>
 </module>
 

@@ -1,15 +1,13 @@
 package net.renalias.wdis.common.messaging
 
-import net.renalias.wdis.frontend.model.ScanJob
+case class NewAsyncScanRequest(requestId:String)
+case class NewSyncScanRequest(requestId: String)
+case class ScanRequestCompleted(requestId:String, text:String)
+case class ScanRequestError(requestId:String, message:String)
+case class Echo(msg: String)
 
 object Constants {
 	val REQUEST_SERVICE_NAME = "scanjob:request"
 	val RESPONSE_SERVICE_NAME = "scanjob:response"
 }
 
-case class NewScanRequest(val requestId:String)
-case class ScanRequestCompleted(val requestId:String, val text:String)
-case class ScanRequestError(val requestId:String, val message:String)
-
-// test messages
-case class Echo(val msg: String)

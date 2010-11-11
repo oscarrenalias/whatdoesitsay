@@ -5,17 +5,12 @@ import _root_.net.liftweb.common._
 import _root_.net.liftweb.http._
 import _root_.net.liftweb.http.provider._
 import _root_.net.liftweb.sitemap._
-import _root_.net.liftweb.sitemap.Loc._
 import Helpers._
 import _root_.net.liftweb.mapper.{DB, ConnectionManager, Schemifier, DefaultConnectionIdentifier, StandardDBVendor}
 import _root_.java.sql.{Connection, DriverManager}
 
-import net.renalias.wdis.frontend.model._
-import net.renalias.wdis.common.io.ScanJobMonitor
 import net.renalias.wdis.frontend.server.FrontendServer
 import net.renalias.wdis.common.couchdb.Database
-import net.renalias.wdis.backend.server.BackendServer
-import net.renalias.wdis.common.config.Config
 
 /**
   * A class that's instantiated early and run.  It allows the application
@@ -23,6 +18,7 @@ import net.renalias.wdis.common.config.Config
   */
 class Boot {
   def boot {
+
     if (!DB.jndiJdbcConnAvailable_?) {
       val vendor = 
 	new StandardDBVendor(Props.get("db.driver") openOr "org.h2.Driver",
@@ -84,4 +80,3 @@ class Boot {
     req.setCharacterEncoding("UTF-8")
   }
 }
-

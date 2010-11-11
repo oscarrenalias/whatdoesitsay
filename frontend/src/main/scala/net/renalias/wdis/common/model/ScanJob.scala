@@ -31,13 +31,11 @@ class ScanJob extends CouchRecord[ScanJob] {
  }
 
 object ScanJob extends ScanJob with CouchMetaRecord[ScanJob] {
-  //def createRecord = new ScanJob
-
   def findAll: List[ScanJob] = {
     val viewReturn = ScanJob.queryView("scanjob", "scanjob_findAll")
     viewReturn match {
       case Full(v) =>  return v.toList
-      case Empty => return Nil
+      case _ => return Nil
     }
   }
 }

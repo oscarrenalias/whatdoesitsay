@@ -108,7 +108,7 @@ object UploadWizard extends Wizard with Logger {
 			val result = job.save
 
 			// only infom the backend actor that there's a new file to process if it was successfully saved
-			result.map({job => BackendServer ! NewScanRequest(job.id.value.get)})
+			result.map({job => BackendServer ! NewAsyncScanRequest(job.id.value.get)})
 
 			result
 		}

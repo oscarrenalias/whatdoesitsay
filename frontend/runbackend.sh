@@ -1,1 +1,1 @@
-mvn scala:run -Dlauncher=backendServer
+mvn scala:run -Dlauncher=backendServer $* 

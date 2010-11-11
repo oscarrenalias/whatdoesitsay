@@ -117,11 +117,60 @@
 			<scope>test</scope>
 		</dependency>
 		<!-- Akka dependency -->
-		<dependency>
+		<!-- dependency>
 			<groupId>se.scalablesolutions.akka</groupId>
 			<artifactId>akka-core_2.8.0</artifactId>
 			<version>0.10</version>
+		</dependency -->
+		<dependency>
+			<groupId>se.scalablesolutions.akka</groupId>
+			<artifactId>akka-kernel_2.8.0</artifactId>
+			<version>1.0-M1</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/src/main/resources/lib/akka-kernel_2.8.0-1.0-M1.jar</systemPath>
 		</dependency>
+		<dependency>
+			<groupId>se.scalablesolutions.akka</groupId>
+			<artifactId>akka-actor_2.8.0</artifactId>
+			<version>1.0-M1</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/src/main/resources/lib/akka-actor_2.8.0-1.0-M1.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>se.scalablesolutions.akka</groupId>
+			<artifactId>akka-http_2.8.0</artifactId>
+			<version>1.0-M1</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/src/main/resources/lib/akka-http_2.8.0-1.0-M1.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>se.scalablesolutions.akka</groupId>
+			<artifactId>akka-osgi-dependencies-bundle_2.8.0</artifactId>
+			<version>1.0-M1</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/src/main/resources/lib/akka-osgi-dependencies-bundle_2.8.0-1.0-M1.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>se.scalablesolutions.akka</groupId>
+			<artifactId>akka-remote_2.8.0</artifactId>
+			<version>1.0-M1</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/src/main/resources/lib/akka-remote_2.8.0-1.0-M1.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>se.scalablesolutions.akka</groupId>
+			<artifactId>akka-typed-actor_2.8.0</artifactId>
+			<version>1.0-M1</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/src/main/resources/lib/akka-typed-actor_2.8.0-1.0-M1.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>se.scalablesolutions.akka</groupId>
+			<artifactId>akka-camel_2.8.0</artifactId>
+			<version>1.0-M1</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/src/main/resources/lib/akka-camel_2.8.0-1.0-M1.jar</systemPath>
+		</dependency>		
 	</dependencies>
 	<build>
 		<sourceDirectory>src/main/scala</sourceDirectory>
@@ -170,7 +219,11 @@
 						<launcher>
 							<id>frontendTest</id>
 							<mainClass>net.renalias.wdis.frontend.server.FrontendTestClient</mainClass>
-						</launcher>						
+						</launcher>
+						<launcher>
+							<id>akka-kernel</id>
+							<mainClass>se.scalablesolutions.akka.kernel.Main</mainClass>
+						</launcher>													
 					</launchers>					
 				</configuration>
 				<executions>
@@ -245,12 +298,6 @@
 					<contextPath>/</contextPath>
 					<!-- scanIntervalSeconds>0</scanIntervalSeconds -->
 					<scanIntervalSeconds>5</scanIntervalSeconds>
-                    <systemProperties>
-                        <systemProperty>
-                            <name>JAVA_OPTIONS</name>
-                            <value>-XX:+CMSPermGenSweepingEnabled -XX:+CMSClassUnloadingEnabled -XX:PermSize=64M -XX:MaxPermSize=128M</value>
-                        </systemProperty>
-                    </systemProperties>
 				</configuration>
 			</plugin>
 			<plugin>

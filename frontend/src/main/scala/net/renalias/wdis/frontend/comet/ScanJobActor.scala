@@ -25,8 +25,8 @@ class ScanJobActor extends CometActor with Logger {
 
 	// retrieves the job identifier
 	def jobId = name match {
-		case Empty => warning("Empty jobId for actor!"); ""
 		case Full(x) => debug("Actor jobId: " + x); x
+		case _ => warning("Empty jobId for actor!"); ""		
 	}
 
 	def render = {
@@ -46,12 +46,12 @@ class ScanJobActor extends CometActor with Logger {
 	}
 	
 	override def localSetup = {
-		debug("Starting comet actor: " + {jobId})
+		info("Starting comet actor: " + {jobId})
 		ScanJobMonitor ! AddJobListener(jobId, this)
 	}
 	
 	override def localShutdown = {
-		debug("Shutting down comet actor: " + {jobId})
+		info("Shutting down comet actor: " + {jobId})
 		ScanJobMonitor ! RemoveJobListener(jobId, this)		
 	}
 	

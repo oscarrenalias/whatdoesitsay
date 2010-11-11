@@ -1,14 +1,9 @@
+import net.renalias.wdis.common.messaging.Echo
 import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
 
-import se.scalablesolutions.akka.actor.Actor
-import se.scalablesolutions.akka.remote.{RemoteClient, RemoteNode}
-import Actor._
-
 import net.renalias.wdis.frontend.server.FrontendServer
-import net.renalias.wdis.common.config.Config
-import net.renalias.wdis.common.messaging._
- 
+
 class FrontendServerTest extends FunSuite with ShouldMatchers {
 	
 	test("It is possible to send messages to the frontend server") {
