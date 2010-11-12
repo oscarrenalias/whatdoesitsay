@@ -74,6 +74,9 @@ object BootableBackendServer {
 
 }
 
+/**
+ * Only required if the backend server is booted as part of Akka's microkernel
+ */
 class AkkaBackendServer extends AkkaActorServer {
 	override lazy val port = Config.getInt("akka.backend.port", 9998)
 	override lazy val host = Config.getString("akka.backend.host", "localhost")
