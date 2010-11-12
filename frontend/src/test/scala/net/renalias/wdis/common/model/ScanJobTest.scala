@@ -1,17 +1,13 @@
 package net.renalias.wdis.common.model.ScanJobTest
 
-import java.io.File
-import net.liftweb.common.{Failure, Full}
-import net.renalias.wdis.common.converter.Scanner
-
 import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
-import net.renalias.wdis.common.couchdb.Database
 import net.renalias.wdis.frontend.model.{ScanJob, ScanJobStatus, ScanJobLang}
+import net.renalias.wdis.common.config.ComponentRegistry
 
 class ScanJobTest extends FunSuite with ShouldMatchers {
 
-	def init = Database.setup
+	def init = ComponentRegistry.database.setup
 
 	test("Objects can be created to the CouchDB database and retrieved from there") {
 			init

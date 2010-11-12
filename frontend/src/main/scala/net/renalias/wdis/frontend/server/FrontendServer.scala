@@ -1,6 +1,5 @@
 package net.renalias.wdis.frontend.server
 
-import net.renalias.wdis.common.config.Config
 import net.renalias.wdis.common.messaging._
 import net.renalias.wdis.common.messaging.Constants._
 import net.renalias.wdis.common.io._
@@ -14,6 +13,7 @@ import java.util.Calendar
 
 import _root_.net.liftweb._
 import common.{Logger, Box, Full, Empty}
+import net.renalias.wdis.common.config.{ComponentRegistry, Config}
 
 class FrontendActor extends Actor with Logger {
 	
@@ -44,14 +44,19 @@ class FrontendActor extends Actor with Logger {
 
 object FrontendTestClient extends Logger {
 	def main(args: Array[String]) = {
-		val response = FrontendServer !! Echo("Hello, world")
+		val response = ComponentRegistry.frontendServer !! Echo("Hello, world")
 		println("The response from the server was = " + response.getOrElse("no response"))
 	}
 }
 
-object FrontendServer extends AkkaActorServer {
-	override lazy val port = Config.getInt("akka.frontend.port", 9999)
-	override lazy val host = Config.getString("akka.frontend.host", "localhost")
-	override lazy val serviceName = 	RESPONSE_SERVICE_NAME
-	override val actorRef = actorOf[FrontendActor]
+trait FrontendServerComponent {
+
+	val frontendServer: FrontendServer
+
+	class FrontendServer extends AkkaActorServer {
+		override lazy val port = Config.getInt("akka.frontend.port", 9999)
+		override lazy val host = Config.getString("akka.frontend.host", "localhost")
+		override lazy val serviceName = 	RESPONSE_SERVICE_NAME
+		override val actorRef = actorOf[FrontendActor]
+	}
 }

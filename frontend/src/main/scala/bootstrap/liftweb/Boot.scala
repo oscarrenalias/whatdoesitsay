@@ -8,9 +8,7 @@ import _root_.net.liftweb.sitemap._
 import Helpers._
 import _root_.net.liftweb.mapper.{DB, ConnectionManager, Schemifier, DefaultConnectionIdentifier, StandardDBVendor}
 import _root_.java.sql.{Connection, DriverManager}
-
-import net.renalias.wdis.frontend.server.FrontendServer
-import net.renalias.wdis.common.couchdb.Database
+import net.renalias.wdis.common.config.ComponentRegistry
 
 /**
   * A class that's instantiated early and run.  It allows the application
@@ -67,10 +65,9 @@ class Boot {
     S.addAround(DB.buildLoanWrapper)
 
 	  // start CouchDB
-	  Database.setup
-
+	  ComponentRegistry.database.setup
 	   // start the frontend server
-		FrontendServer.start
+		ComponentRegistry.frontendServer.start
   }
 
   /**

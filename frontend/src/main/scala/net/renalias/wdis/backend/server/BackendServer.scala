@@ -1,15 +1,13 @@
 package net.renalias.wdis.backend.server
 
-import net.renalias.wdis.common.config.Config
 import net.renalias.wdis.common.messaging._
 import net.liftweb.common.{Empty, Logger, Full, Failure}
-import net.renalias.wdis.frontend.server.FrontendServer
 import net.renalias.wdis.frontend.model.ScanJob
 import net.renalias.wdis.common.server.AkkaActorServer
 
 import se.scalablesolutions.akka.actor.Actor
 import se.scalablesolutions.akka.actor.Actor._
-import net.renalias.wdis.common.couchdb.Database
+import net.renalias.wdis.common.config.{ComponentRegistry, Config}
 
 class BackendActor extends Actor with Logger {
 
@@ -39,10 +37,8 @@ class BackendActor extends Actor with Logger {
 		result
 	}
 
-	lazy val replyToServer = FrontendServer
-
 	def receive = {
-		case NewAsyncScanRequest(jobId) => replyToServer ! processJob(jobId)
+		case NewAsyncScanRequest(jobId) => ComponentRegistry.frontendServer ! processJob(jobId)
 		case NewSyncScanRequest(jobId) => self.reply(processJob(jobId))
 		case Echo(msg) => self.reply("Echo: " + msg)
 		case _ => self.reply(ScanRequestError("-1", "The back end server received a message that it did not understand"))
@@ -51,23 +47,31 @@ class BackendActor extends Actor with Logger {
 
 object BackendTestClient extends Logger {
 	def main(args: Array[String]) = {
-		val response = BackendServer !! Echo("Hello, world")
+		val response = ComponentRegistry.backendServer !! Echo("Hello, world")
 		println("The response from the server was = " + response.getOrElse("no response"))
 	}
 }
 
-object BackendServer extends AkkaActorServer {
-	override lazy val port = Config.getInt("akka.backend.port", 9998)
-	override lazy val host = Config.getString("akka.backend.host", "localhost")
-	override lazy val serviceName = net.renalias.wdis.common.messaging.Constants.REQUEST_SERVICE_NAME
-	override val actorRef = actorOf[BackendActor]
+trait BackendServerComponent {
 
+	val backendServer: BackendServer
+
+	class BackendServer extends AkkaActorServer {
+		override lazy val port = Config.getInt("akka.backend.port", 9998)
+		override lazy val host = Config.getString("akka.backend.host", "localhost")
+		override lazy val serviceName = net.renalias.wdis.common.messaging.Constants.REQUEST_SERVICE_NAME
+		override val actorRef = actorOf[BackendActor]
+	}
+}
+
+object BootableBackendServer {
 	def main(args : Array[String]) = {
 		// since we're not going through Lift's Boot.scala, we need to initialize the CouchDB connection by ourselves
-		Database.setup
+		ComponentRegistry.database.setup
 		// and then we start the server
-		start
+		ComponentRegistry.backendServer.start
 	}
+
 }
 
 class AkkaBackendServer extends AkkaActorServer {
@@ -76,7 +80,7 @@ class AkkaBackendServer extends AkkaActorServer {
 	override lazy val serviceName = net.renalias.wdis.common.messaging.Constants.REQUEST_SERVICE_NAME
 	override val actorRef = actorOf[BackendActor]
 	
-	Database.setup
+	ComponentRegistry.database.setup
 	
 	start
 }

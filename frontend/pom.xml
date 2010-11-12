@@ -208,7 +208,7 @@
 						<!-- launcher for the standalone server -->						
 						<launcher>
 							<id>backendServer</id>
-							<mainClass>net.renalias.wdis.backend.server.BackendServer</mainClass>
+							<mainClass>net.renalias.wdis.backend.server.BootableBackendServer</mainClass>
 						</launcher>						
 						<!-- launcher for the backend test client -->
 						<launcher>

@@ -10,14 +10,12 @@ import _root_.net.liftweb.wizard._
 import _root_.net.liftweb.common._
 
 import java.io.File
+
 import net.renalias.wdis.common.io._
 import net.renalias.wdis.common.io.FileHelper._
 import net.renalias.wdis.frontend.model._
-import net.renalias.wdis.common.config.Config
 import net.renalias.wdis.common.messaging._
-import net.renalias.wdis.backend.server.BackendServer
-
-import se.scalablesolutions.akka.remote.{RemoteClient, RemoteNode}
+import net.renalias.wdis.common.config.{ComponentRegistry, Config}
 
 object UploadWizard extends Wizard with Logger {
 	def isImage(f: FileParamHolder): Boolean = {
@@ -108,7 +106,7 @@ object UploadWizard extends Wizard with Logger {
 			val result = job.save
 
 			// only infom the backend actor that there's a new file to process if it was successfully saved
-			result.map({job => BackendServer ! NewAsyncScanRequest(job.id.value.get)})
+			result.map({job => ComponentRegistry.backendServer ! NewAsyncScanRequest(job.id.value.get)})
 
 			result
 		}
