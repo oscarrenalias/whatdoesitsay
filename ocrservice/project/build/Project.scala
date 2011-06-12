@@ -1,7 +1,7 @@
 import sbt._
 import Process._
 
-class Project(info: ProjectInfo) extends DefaultWebProject(info) with AkkaProject {
+class Project(info: ProjectInfo) extends DefaultWebProject(info) with AkkaProject with IdeaProject {
   
   // -------------------------------------------------------------------------------------------------------------------
   // All repositories *must* go here! See ModuleConfigurations below.
