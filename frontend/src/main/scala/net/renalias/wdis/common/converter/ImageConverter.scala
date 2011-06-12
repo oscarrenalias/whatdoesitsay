@@ -32,10 +32,10 @@ trait ImageMagickConverter extends AbstractConverter with Logger {
 	}
 }
 
-object ImageConverter extends ImageMagickConverter {
+object ImageConverter extends ImageMagickConverter with Function2[String, String, Box[String]] {
+	this: AbstractConverter =>
 	def apply(file: String, toFile: String) = {
-		val converter = new Object with ImageMagickConverter
-		converter.convert(file, toFile)
+		convert(file, toFile)
 	}
 }
 

@@ -51,7 +51,6 @@ class Scanner(Listener):
 	STATUS_NEW = 1
 	STATUS_IN_PROGRESS = 2
 	STATUS_COMPLETED = 3
-	STATUS_ERROR = 4
 	
 	def notify(self, event):
 		print( "Event notified: " + event.name)

@@ -105,7 +105,6 @@ object UploadWizard extends Wizard with Logger {
 			job.lang.set(ScanJobLang.ENG)
 			val result = job.save
 
-			// only infom the backend actor that there's a new file to process if it was successfully saved
 			result.map({job => ComponentRegistry.backendServer ! NewAsyncScanRequest(job.id.value.get)})
 
 			result

@@ -3,7 +3,6 @@ package net.renalias.wdis.common.io
 import net.liftweb.util.StringHelpers
 
 import java.io._
-import java.util.Scanner
 
 class FileHelper(val file : File) {
 	// saves data to the given file in binary format

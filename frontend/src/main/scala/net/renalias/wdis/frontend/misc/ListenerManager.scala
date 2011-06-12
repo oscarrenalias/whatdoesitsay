@@ -1,12 +1,5 @@
 package net.renalias.wdis.frontend.misc
 
-import scala.actors._
-
-/*trait Listener {
-	// empty for now
-	self: Actor =>
-}*/
-
 trait ListenerManager {
 	
 	type Listener = { def !(msg:Any); }	// as long as the object supports the ""!"" method, we don't really care what it is

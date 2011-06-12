@@ -9,6 +9,7 @@ import Helpers._
 import _root_.net.liftweb.mapper.{DB, ConnectionManager, Schemifier, DefaultConnectionIdentifier, StandardDBVendor}
 import _root_.java.sql.{Connection, DriverManager}
 import net.renalias.wdis.common.config.ComponentRegistry
+import net.renalias.wdis.common.config.Settings._
 
 /**
   * A class that's instantiated early and run.  It allows the application
@@ -65,9 +66,9 @@ class Boot {
     S.addAround(DB.buildLoanWrapper)
 
 	  // start CouchDB
-	  ComponentRegistry.database.setup
+	  registry.database.setup
 	   // start the frontend server
-		ComponentRegistry.frontendServer.start
+		registry.frontendServer.start
   }
 
   /**

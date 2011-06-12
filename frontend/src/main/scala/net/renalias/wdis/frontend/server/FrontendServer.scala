@@ -2,7 +2,6 @@ package net.renalias.wdis.frontend.server
 
 import net.renalias.wdis.common.messaging._
 import net.renalias.wdis.common.messaging.Constants._
-import net.renalias.wdis.common.io._
 import net.renalias.wdis.frontend.model._
 import net.renalias.wdis.common.server.AkkaActorServer
 
@@ -13,13 +12,14 @@ import java.util.Calendar
 
 import _root_.net.liftweb._
 import common.{Logger, Box, Full, Empty}
+import net.renalias.wdis.frontend.comet.JobCompleted
 import net.renalias.wdis.common.config.{ComponentRegistry, Config}
 
 class FrontendActor extends Actor with Logger {
 	
 	def receive = {
 		case ScanRequestCompleted(jobId, text) => {
-			println("Received ScanRequestCompleted message - jobId = " + jobId + ", text = " + text)
+			info("Received ScanRequestCompleted message - jobId = " + jobId + ", text = " + text)
 			
 			ScanJob.fetch(jobId) match {
 				case Full(job) => {
@@ -29,7 +29,7 @@ class FrontendActor extends Actor with Logger {
 					completedDate(Calendar.getInstance).
 					save 
 					// notify listeners
-					ScanJobMonitor.notify(JobCompleted(jobId))
+					ComponentRegistry.cometActorManager.notify(JobCompleted(jobId))
 				}
 				case _ => log.error("There was no matching job with id = " + jobId)
 			}			

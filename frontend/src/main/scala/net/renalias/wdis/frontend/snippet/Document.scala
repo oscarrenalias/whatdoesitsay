@@ -20,7 +20,7 @@ class Document extends Logger {
 			case Full(docId) => {
 				ScanJob.fetch(docId) match {
 					case Full(job) if (job.status.value != ScanJobStatus.Completed) => {
-						debug("docId = " + docId)
+						info("docId = " + docId)
 						<lift:comet type="ScanJobActor" name={docId}/>
 					}
 					case Full(job) if (job.status.value == ScanJobStatus.Completed) => {

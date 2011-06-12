@@ -21,13 +21,11 @@ trait AkkaActorServer extends Logger {
 	lazy val serviceName = "AkkaActorServer"
 	val actorRef: ActorRef
 
-	def actor = {
-		RemoteClient.actorFor(serviceName, host, port)
-	}
+	lazy val actor = RemoteClient.actorFor(serviceName, host, port)
 
 	def !(msg: AnyRef) = actor ! msg
 	def !!(msg: AnyRef) = actor !! msg
-	def !!(msg: AnyRef, timeout: Int) = actor !! (msg, timeout)	
+	def !!(msg: AnyRef, timeout: Int) = actor !! (msg, timeout)
 
 	def start = {
 		val server = new RemoteServer

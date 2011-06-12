@@ -14,21 +14,21 @@ trait AbstractScanner {
 
 trait TesseractScanner extends AbstractScanner with Logger {
 	override def scan(file: String, lang: String) = {
-		println("Scanning file: " + file)
+		info("Scanning file: " + file)
 
 		val outFile = file + ".txt"
 
 		// we don't use outFile here because tesseract appends .txt automatically
 		val scan = Config.getString_!("tools.tesseract") + " " + file + " " + file + " -l " + lang
 		val result = try {
-			println("Tesseract processing file: " + file)
-			println("command: " + scan)
+			info("Tesseract processing file: " + file)
+			info("command: " + scan)
 
 			val pb = Process(scan)
 			pb ! match {
 				case 0 => Full(text(outFile))
 				case _ => {
-					println("There was an error executing Tesseract")
+					info("There was an error executing Tesseract")
 					Failure("Execution unsuccesful", Full(new Exception("Execution unsuccessful")), Empty)
 				}
 			}
@@ -48,15 +48,15 @@ trait TesseractScanner extends AbstractScanner with Logger {
 		val f = new File(file)
 		val contents = f.read
 
-		println("contents of scanned file: " + file + " ==>" + contents)
+		info("Contents of scanned file: " + file + " ==>" + contents)
 
 		contents
 	}
 }
 
-object Scanner {
+object Scanner extends Function2[String, String, Box[String]] with TesseractScanner {
+	this: AbstractScanner =>
 	def apply(file:String, lang:String) = {
-		val scanner = new Object with TesseractScanner
-		scanner.scan(file, lang)
+		scan(file, lang)
 	}
 }

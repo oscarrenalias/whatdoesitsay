@@ -35,7 +35,7 @@ object ScanJob extends ScanJob with CouchMetaRecord[ScanJob] {
     val viewReturn = ScanJob.queryView("scanjob", "scanjob_findAll")
     viewReturn match {
       case Full(v) =>  return v.toList
-      case _ => return Nil
+      case Empty => return Nil
     }
   }
 }
