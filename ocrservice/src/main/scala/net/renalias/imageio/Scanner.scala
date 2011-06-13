@@ -4,9 +4,9 @@ import xsbt.Process
 import java.io.File
 import akka.util.Logging
 import net.renalias.config.Config
-import scala.Some
 import net.renalias.imageio.FileHelper._
 import net.renalias.imageio.ScannerTypes._
+import scala.{Right, Some}
 
 object ScannerTypes {
 	type ScannerResultType = Either[Option[Exception],String]
@@ -33,7 +33,7 @@ trait TesseractScanner extends AbstractScanner with Logging {
 				case 0 => Right(text(outFile))
 				case _ => {
 					log.info("There was an error executing Tesseract")
-					Left(Some(new Exception("Execution unsuccessful")))
+					Left(Some(new Exception("There was an error scanning the given image")))
 				}
 			}
 		} catch {			
@@ -62,5 +62,12 @@ object Scanner extends Function2[String, String, ScannerResultType] with Tessera
 	this: AbstractScanner =>
 	def apply(file:String, lang:String) = {
 		scan(file, lang)
+	}
+}
+
+// mock to be used for testing
+object ScannerTest extends Function2[String, String, ScannerResultType] {
+	def apply(file:String, lang:String) = {
+		Right("These are the OCR results")
 	}
 }

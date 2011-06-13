@@ -30,4 +30,7 @@ class Project(info: ProjectInfo) extends DefaultWebProject(info) with AkkaProjec
   val specs       = "org.scala-tools.testing" %% "specs" % "1.6.7" % "test"
   val jettyServer = "org.eclipse.jetty" % "jetty-server" % JETTY_VERSION % "test"
   val jettyWebApp = "org.eclipse.jetty" % "jetty-webapp" % JETTY_VERSION % "test"
+
+	val configgyRepo = "Scala-tools Maven Repository" at "http://scala-tools.org/repo-releases/"
+	val configgy = "net.lag" % "configgy" % "2.0.0"
 }

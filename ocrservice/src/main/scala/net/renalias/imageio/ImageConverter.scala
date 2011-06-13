@@ -13,18 +13,18 @@ object ConverterTypes {
 }
 
 trait ImageMagickConverter extends AbstractConverter with Logging {
+
 	override def convert(file: String, toFile: String) = {
-		
-		// FIXME
+
 		val convert = Config.getString_!("tools.convert") + " " + file + " " + toFile
 		val result = try {
-		log.debug("ImageMagick converting file: " + file)
-		log.debug("command: " + convert)
+			log.debug("ImageMagick converting file: " + file)
+			log.debug("command: " + convert)
 			
 			val pb = Process(convert)
 			pb ! match {
 				case 0 => Right(toFile)
-				case _ => Left(Some(new Exception("Execution unsuccessful")))
+				case _ => Left(Some(new Exception("There was an error converting the image file")))
 			}
 		} catch {			
 			case ex:Exception => Left(Some(ex))
@@ -36,12 +36,12 @@ trait ImageMagickConverter extends AbstractConverter with Logging {
 
 object ImageConverter extends ImageMagickConverter with Function2[String, String, ConverterResultType] {
 	this: AbstractConverter =>
-	def apply(file: String, toFile: String) = {
-		convert(file, toFile)
-	}
+
+	def apply(file: String, toFile: String) = convert(file, toFile)
+	def toFormat(file:String, targetFormat: String) = convert(file, file + "." + targetFormat)
 }
 
-trait ImageFileChecker {
+object ImageFileChecker {
 
 	// list of formats that need no conversion
 	private val NO_CONVERSION = List( "tif", "tiff" )
@@ -51,20 +51,10 @@ trait ImageFileChecker {
 	/**
 	 * Checks if the given image file requires conversion
 	 */
-	def isConversionNeeded(file: String) = {
-		FileHelper.getExtension(file) match {
-			case Some(ext) => !NO_CONVERSION.contains(ext.toLowerCase)
-			case None => true
-		}
-	}
+	val isConversionNeeded = (f:String) => FileHelper.getExtension(f).map({ext => !NO_CONVERSION.contains(ext.toLowerCase)}).getOrElse(true)
 
 	/**
 	 * Checks if the image format is supported
 	 */
-	def isSupported(file: String) = {
-		FileHelper.getExtension(file) match {
-			case Some(ext) => SUPPORTED_FORMATS.contains(ext.toLowerCase)
-			case None => false
-		}
-	}
+	val isSupported = (f:String) => FileHelper.getExtension(f).map({ext => SUPPORTED_FORMATS.contains(ext.toLowerCase)}).getOrElse(false)
 }

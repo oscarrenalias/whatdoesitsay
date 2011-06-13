@@ -2,6 +2,7 @@ package net.renalias.ocrservice
 
 import akka.util.Logging
 import net.renalias.ocrservice.OCRTypes.OCRServicePipelineComponent
+import net.renalias.imageio.{Scanner, ImageConverter, ImageFileChecker}
 
 object OCRTypes {
 	type OCRPipelineType = (OCRRequest) => (OCRRequest)
@@ -11,27 +12,25 @@ object OCRTypes {
 object ImageConversionService extends OCRServicePipelineComponent {
 	def apply(info:OCRRequest) = {
 
-		// set the new file name
-		info.outputFile = Some("outputfile.tiff")
+		// is conversion needed?
+		ImageFileChecker.isConversionNeeded(info.inputFile) match {
+			case true => ImageConverter.toFormat(info.inputFile, "tiff").fold({ ex => throw ex.get }, { f => info.outputFile = Some(f) })
+			case false => info.outputFile = Some(info.inputFile)
+		}
 
-		// return the updated input object
 		info
 	}
 }
 
 object OCRService extends OCRServicePipelineComponent {
 	def apply(info:OCRRequest) = {
-		info.result = Some("these are the contents of the file")
-
-		// return the updated object
-		info
+		Scanner(info.outputFile.get, info.lang).fold({ ex => throw ex.get }, { text => info.result = Some(text); info })
 	}
 }
 
 object OCRServiceLogger extends OCRServicePipelineComponent with Logging {
 	def apply(info: OCRRequest) = {
 		log.info("Processing OCR request = " + info)
-
 		// return the object unchanged
 		info
 	}
@@ -46,7 +45,6 @@ trait ConvertAndScan {
 trait ConvertAndScanTest {
 	val scanPipeline = (f:OCRRequest) => {
 		f.result = Some("Test result")
-
 		f
 	}
 }
