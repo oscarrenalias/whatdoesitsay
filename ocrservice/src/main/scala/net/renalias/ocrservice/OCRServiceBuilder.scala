@@ -13,7 +13,7 @@ trait OCRServiceBuilder extends ServiceBuilder {
 			id =>
 				get {
 					val incomingPath = Config.getString_!("folders.incoming")
-					_.complete(scanPipeline(OCRRequest(incomingPath + id, "EN")).result.getOrElse("Nothing to show"))
+					_.complete(scanPipeline(OCRRequest(incomingPath + id, "eng")).result.getOrElse("Nothing to show"))
 				}
 		}
 	}
