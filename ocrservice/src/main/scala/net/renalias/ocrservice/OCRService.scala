@@ -36,10 +36,17 @@ object OCRServiceLogger extends OCRServicePipelineComponent with Logging {
 	}
 }
 
+object FileArchiver extends OCRServicePipelineComponent with Logging {
+	def apply(info: OCRRequest) = {
+		log.info("Archiving file: " + info.outputFile + " (TODO)")
+		info
+	}
+}
+
 sealed case class OCRRequest(inputFile:String, lang:String, var outputFile: Option[String] = None, var result:Option[String] = None)
 
 trait ConvertAndScan {
-	val scanPipeline = OCRServiceLogger andThen ImageConversionService andThen OCRService
+	val scanPipeline = OCRServiceLogger andThen ImageConversionService andThen OCRService andThen FileArchiver
 }
 
 trait ConvertAndScanTest {
