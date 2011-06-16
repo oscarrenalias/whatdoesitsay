@@ -60,14 +60,10 @@ trait TesseractScanner extends AbstractScanner with Logging {
 
 object Scanner extends Function2[String, String, ScannerResultType] with TesseractScanner {
 	this: AbstractScanner =>
-	def apply(file:String, lang:String) = {
-		scan(file, lang)
-	}
+	def apply(file:String, lang:String) = scan(file, lang)
 }
 
 // mock to be used for testing
 object ScannerTest extends Function2[String, String, ScannerResultType] {
-	def apply(file:String, lang:String) = {
-		Right("These are the OCR results")
-	}
+	def apply(file:String, lang:String) = Right("These are the OCR results")
 }
