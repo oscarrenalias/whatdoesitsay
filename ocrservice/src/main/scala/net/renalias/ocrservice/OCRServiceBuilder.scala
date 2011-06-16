@@ -2,6 +2,7 @@ package net.renalias.ocrservice
 
 import cc.spray._
 import net.renalias.ocrservice.OCRTypes._
+import net.renalias.config.Config
 
 trait OCRServiceBuilder extends ServiceBuilder {
 
@@ -11,7 +12,8 @@ trait OCRServiceBuilder extends ServiceBuilder {
 		path("scan" / ".*".r) {
 			id =>
 				get {
-					_.complete(scanPipeline(OCRRequest(id, "EN")).result.getOrElse("Nothing to show"))
+					val incomingPath = Config.getString_!("folders.incoming")
+					_.complete(scanPipeline(OCRRequest(incomingPath + id, "EN")).result.getOrElse("Nothing to show"))
 				}
 		}
 	}
