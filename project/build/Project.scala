@@ -1,7 +1,7 @@
 import sbt._
 import Process._
 
-class Project(info: ProjectInfo) extends DefaultWebProject(info) with AkkaProject {
+class Project(info: ProjectInfo) extends DefaultWebProject(info) with AkkaProject with IdeaProject {
   
   // -------------------------------------------------------------------------------------------------------------------
   // All repositories *must* go here! See ModuleConfigurations below.
@@ -37,4 +37,7 @@ class Project(info: ProjectInfo) extends DefaultWebProject(info) with AkkaProjec
   val specs       = "org.scala-tools.testing" %% "specs" % "1.6.8" % "test"
   val jettyServer = "org.eclipse.jetty" % "jetty-server" % JETTY_VERSION % "test"
   val jettyWebApp = "org.eclipse.jetty" % "jetty-webapp" % JETTY_VERSION % "test"
+
+	val configgyRepo = "Scala-tools Maven Repository" at "http://scala-tools.org/repo-releases/"
+	val configgy = "net.lag" % "configgy" % "2.0.0" intransitive()
 }
