@@ -40,4 +40,7 @@ class Project(info: ProjectInfo) extends DefaultWebProject(info) with AkkaProjec
 
 	val configgyRepo = "Scala-tools Maven Repository" at "http://scala-tools.org/repo-releases/"
 	val configgy = "net.lag" % "configgy" % "2.0.0" intransitive()
+
+	val sprayJsonModuleConfig = ModuleConfiguration("cc.spray.json", ScalaToolsSnapshots)
+	val sprayJson = "cc.spray.json" %% "spray-json" % "1.0.0-SNAPSHOT" % "compile" withSources()
 }
