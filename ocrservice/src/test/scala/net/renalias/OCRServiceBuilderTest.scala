@@ -1,12 +1,14 @@
 package net.renalias
 
+import org.specs.Specification
+import ocrservice.{ConvertAndScanTest, OCRServiceBuilder}
 import cc.spray._
+import test._
 import http._
 import HttpMethods._
-import HttpStatusCodes._
-import ocrservice.{ConvertAndScanTest, OCRServiceBuilder}
-import org.specs.Specification
-import test.SprayTest
+import HttpHeaders._
+import MediaTypes._
+import StatusCodes._
 
 class OCRServiceBuilderTest extends Specification with SprayTest with OCRServiceBuilder with ConvertAndScanTest {
   "The OCR Service" should {
@@ -23,7 +25,7 @@ class OCRServiceBuilderTest extends Specification with SprayTest with OCRService
     "return a MethodNotAllowed error for POST requests to the root path" in {
       testService(HttpRequest(POST, "/")) {
         service
-      }.response mustEqual failure(MethodNotAllowed, "HTTP method not allowed, supported methods: GET")
+      }.response mustEqual HttpResponse(MethodNotAllowed, "HTTP method not allowed, supported methods: GET")
     }
   }
 }
