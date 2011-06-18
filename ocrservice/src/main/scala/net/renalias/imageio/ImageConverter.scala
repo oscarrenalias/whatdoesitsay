@@ -34,7 +34,29 @@ trait ImageMagickConverter extends AbstractConverter with Logging {
 	}
 }
 
-object ImageConverter extends ImageMagickConverter with Function2[String, String, ConverterResultType] {
+trait GraphicsMagickConverter extends AbstractConverter with Logging {
+
+	override def convert(file: String, toFile: String) = {
+
+		val convert = Config.getString_!("tools.gm_command").replace("{1}", file).replace("{2}", toFile)
+		val result = try {
+			log.debug("ConvertMagick converting file: " + file)
+			log.debug("command: " + convert)
+
+			val pb = Process(convert)
+			pb ! match {
+				case 0 => Right(toFile)
+				case _ => Left(Some(new Exception("There was an error converting the image file")))
+			}
+		} catch {
+			case ex:Exception => Left(Some(ex))
+		}
+
+		result
+	}
+}
+
+object ImageConverter extends GraphicsMagickConverter with Function2[String, String, ConverterResultType] {
 	this: AbstractConverter =>
 
 	def apply(file: String, toFile: String) = convert(file, toFile)
