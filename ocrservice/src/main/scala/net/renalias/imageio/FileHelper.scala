@@ -36,4 +36,15 @@ object FileHelper {
 			case x:Int => fileName.substring(0, x)
 		}
 	}
+
+	// helps in pattern matching
+	object FileExtension {
+		def apply(f:String) = getExtension(f)
+		def unapply(f:String) = apply(f)
+	}
+
+	object FileName {
+		def apply(f:String) = getFileName(f)
+		def unapply(f:String) = apply(f)
+	}
 }

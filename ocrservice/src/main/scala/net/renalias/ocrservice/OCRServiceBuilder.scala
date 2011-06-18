@@ -1,19 +1,26 @@
 package net.renalias.ocrservice
 
 import cc.spray._
+import marshalling.SprayJsonMarshalling
 import net.renalias.ocrservice.OCRTypes._
-import net.renalias.config.Config
 
-trait OCRServiceBuilder extends Directives {
+trait OCRServiceBuilder extends Directives with SprayJsonMarshalling {
+
+	import net.renalias.ocrservice.OCRRequest._
 
 	val scanPipeline: OCRPipelineType
+	val sourceFolder: String
 
 	val service = {
 		path("scan" / ".*".r) {
 			id =>
 				get {
-					val incomingPath = Config.getString_!("folders.incoming")
-					_.complete(scanPipeline(OCRRequest(incomingPath + id, "eng")).result.getOrElse("Nothing to show"))
+					val result = try {
+						scanPipeline(OCRRequest(sourceFolder + id, "eng"))
+					}  catch {
+						case ex:Exception => OCRRequest(inputFile = id, lang = "eng", error = true, errorInfo = Some(ex.toString))
+					}
+					_.complete(result)
 				}
 		}
 	}
