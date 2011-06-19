@@ -1,6 +1,9 @@
 package bootstrap.liftweb
 
+package bootstrap.liftweb
+
 import net.liftweb._
+import mongodb.{DefaultMongoIdentifier, MongoIdentifier, MongoDB}
 import util._
 import Helpers._
 
@@ -9,16 +12,16 @@ import http._
 import sitemap._
 import Loc._
 import mapper._
-
-import code.model._
-
+import com.mongodb.{MongoOptions, ServerAddress, Mongo}
+import net.renalias.frontend.mongo.MongoConfig
 
 /**
- * A class that's instantiated early and run.  It allows the application
- * to modify lift's environment
- */
+  * A class that's instantiated early and run.  It allows the application
+  * to modify lift's environment
+  */
 class Boot {
   def boot {
+
     if (!DB.jndiJdbcConnAvailable_?) {
       val vendor = 
 	new StandardDBVendor(Props.get("db.driver") openOr "org.h2.Driver",
@@ -29,53 +32,57 @@ class Boot {
       LiftRules.unloadHooks.append(vendor.closeAllConnections_! _)
 
       DB.defineConnectionManager(DefaultConnectionIdentifier, vendor)
-    }
-
-    // Use Lift's Mapper ORM to populate the database
-    // you don't need to use Mapper to use Lift... use
-    // any ORM you want
-    Schemifier.schemify(true, Schemifier.infoF _, User)
-
+    }	
+	
     // where to search snippet
-    LiftRules.addToPackages("code")
+    LiftRules.addToPackages("net.renalias.frontend")
+
+	// For mapper entities - not needed if we're using couchdb
+    //Schemifier.schemify(true, Schemifier.infoF _, ScanJob)
 
     // Build SiteMap
-    def sitemap = SiteMap(
-      Menu.i("Home") / "index" >> User.AddUserMenusAfter, // the simple way to declare a menu
+    val entries = Menu(Loc("Home", List("index"), "Home")) :: 
+				  Menu(Loc("View Document", List("document"), "View Document")) :: Nil
 
-      // more complex because this menu allows anything in the
-      // /static path to be visible
-      Menu(Loc("Static", Link(List("static"), true, "/static/index"), 
-	       "Static Content")))
-
-    def sitemapMutators = User.sitemapMutator
+    //LiftRules.setSiteMap(SiteMap(entries:_*))
+    //def sitemapMutators = User.sitemapMutator
 
     // set the sitemap.  Note if you don't want access control for
     // each page, just comment this line out.
-    LiftRules.setSiteMapFunc(() => sitemapMutators(sitemap))
+    //LiftRules.setSiteMapFunc(() => sitemapMutators(sitemap))
 
     // Use jQuery 1.4
     LiftRules.jsArtifacts = net.liftweb.http.js.jquery.JQuery14Artifacts
 
-    //Show the spinny image when an Ajax call starts
-    LiftRules.ajaxStart =
-      Full(() => LiftRules.jsArtifacts.show("ajax-loader").cmd)
-    
-    // Make the spinny image go away when it ends
-    LiftRules.ajaxEnd =
-      Full(() => LiftRules.jsArtifacts.hide("ajax-loader").cmd)
+    /*
+     * Show the spinny image when an Ajax call starts
+     */
+    LiftRules.ajaxStart = Full(() => LiftRules.jsArtifacts.show("ajax-loader").cmd)
+
+    /*
+     * Make the spinny image go away when it ends
+     */
+    LiftRules.ajaxEnd = Full(() => LiftRules.jsArtifacts.hide("ajax-loader").cmd)
+
+	/**
+	 * Our own routing for handling /document/<number> URLs
+	 */
+	LiftRules.rewrite.append {
+		case RewriteRequest(ParsePath(List("document", documentNumber), _, _, _), _, _) => 
+				RewriteResponse("document" :: Nil, Map("documentId" -> documentNumber ))
+	}
 
     // Force the request to be UTF-8
     LiftRules.early.append(_.setCharacterEncoding("UTF-8"))
 
     // What is the function to test if a user is logged in?
-    LiftRules.loggedInTest = Full(() => User.loggedIn_?)
+    //LiftRules.loggedInTest = Full(() => User.loggedIn_?)
 
     // Use HTML5 for rendering
-    LiftRules.htmlProperties.default.set((r: Req) =>
-      new Html5Properties(r.userAgent))    
+    LiftRules.htmlProperties.default.set((r: Req) => new Html5Properties(r.userAgent))
 
-    // Make a transaction span the whole HTTP request
     S.addAround(DB.buildLoanWrapper)
+
+	  MongoConfig.init
   }
 }
