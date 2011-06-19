@@ -16,7 +16,7 @@ trait ImageMagickConverter extends AbstractConverter with Logging {
 
 	override def convert(file: String, toFile: String) = {
 
-		val convert = Config.getString_!("tools.convert") + " " + file + " " + toFile
+		val convert = Config.getString_!("tools.convert").replace("{1}", file).replace("{2}", toFile)
 		val result = try {
 			log.debug("ImageMagick converting file: " + file)
 			log.debug("command: " + convert)
