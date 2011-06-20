@@ -1,5 +1,4 @@
-package code
-package lib
+package net.renalias.frontend.lib
 
 import net.liftweb._
 import http._

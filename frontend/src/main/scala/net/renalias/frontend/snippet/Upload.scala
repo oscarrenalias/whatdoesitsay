@@ -18,11 +18,6 @@ import net.renalias.frontend.helpers.FileHelper
 
 object UploadWizard extends Wizard with Logger {
 	def isImage(f: FileParamHolder): Boolean = {
-		/*FileHelper.getExtension(f.fileName) match {
-			case None => false
-			case Some(x) if x == "png" || x == "jpg" || x == "jpeg" || x == "tif" || x == "tiff" => true
-			case _ => false
-		}*/
 		f.fileName match {
 			case FileExtension(x) if x == "png" || x == "jpg" || x == "jpeg" || x == "tif" || x == "tiff" => true
 			case _ => false

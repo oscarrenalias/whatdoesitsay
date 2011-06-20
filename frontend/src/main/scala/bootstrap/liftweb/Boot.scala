@@ -1,9 +1,6 @@
 package bootstrap.liftweb
 
-package bootstrap.liftweb
-
 import net.liftweb._
-import mongodb.{DefaultMongoIdentifier, MongoIdentifier, MongoDB}
 import util._
 import Helpers._
 
@@ -41,15 +38,13 @@ class Boot {
     //Schemifier.schemify(true, Schemifier.infoF _, ScanJob)
 
     // Build SiteMap
-    val entries = Menu(Loc("Home", List("index"), "Home")) :: 
-				  Menu(Loc("View Document", List("document"), "View Document")) :: Nil
-
-    //LiftRules.setSiteMap(SiteMap(entries:_*))
-    //def sitemapMutators = User.sitemapMutator
+    def sitemap = SiteMap(
+	        Menu(Loc("Home", List("index"), "Home")),
+				  Menu(Loc("View Document", List("document"), "View Document")))
 
     // set the sitemap.  Note if you don't want access control for
     // each page, just comment this line out.
-    //LiftRules.setSiteMapFunc(() => sitemapMutators(sitemap))
+    LiftRules.setSiteMapFunc(() => sitemap)
 
     // Use jQuery 1.4
     LiftRules.jsArtifacts = net.liftweb.http.js.jquery.JQuery14Artifacts
