@@ -24,7 +24,7 @@ class Document extends Logger {
 						<lift:comet type="ScanJobActor" name={docId}/>
 					}
 					case Full(job) if (job.status.value == ScanJobStatus.Completed) => {
-						bind("document", xhtml, "id" -> job.id.value.get, "status" -> job.status.value.toString, "text" -> job.text.value.getOrElse(""))
+						bind("document", xhtml, "id" -> job.id.is.toString, "status" -> job.status.value.toString, "text" -> job.text.value.getOrElse(""))
 					}
 					case _ => errorNotFound
 				}

@@ -50,7 +50,7 @@ object UploadWizard extends Wizard with Logger {
 			lazy val langValues = List(("ENG", S ?? "English"), ("DEU", S ?? "German"), ("ESP", S ?? "Spanish"))
 
 			override def toForm = {
-				SHtml.select(langValues, Box("EN"), v => set(v))
+				SHtml.select(langValues, Box(Some("EN")), v => set(v))
 			}
 		}
 
@@ -117,7 +117,7 @@ object UploadWizard extends Wizard with Logger {
 			case Full(f) => {
 				val fileId = FileHelper.randomName
 				saveFile(f, fileId, "ENG") match {
-					case Full(job) => S.seeOther("/document/" + job.id.value.get)
+					case Full(job) => S.seeOther("/document/" + job.id.is)
 					case _ => S.error("There was an error processing your request"); error("Error saving job for file: " + f)
 				}
 			}

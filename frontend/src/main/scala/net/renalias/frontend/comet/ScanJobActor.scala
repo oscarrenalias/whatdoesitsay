@@ -4,12 +4,11 @@ import net.liftweb.http.CometActor
 import _root_.net.liftweb.util.Helpers._
 import _root_.scala.xml.{Text}
 import net.liftweb.common.{Logger, Box, Full, Empty}
-import net.renalias.frontend.comet.{JobCompleted, RemoveJobListener, AddJobListener}
 import net.renalias.frontend.model.{ScanJobStatus, ScanJob}
 
 class ScanJobActor extends CometActor with Logger {
 	
-	override def defaultPrefix = Box("Job")
+	override def defaultPrefix = Box(Some("Job"))
 
 	// full re-render every time
 	override def devMode = true

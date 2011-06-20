@@ -67,7 +67,7 @@ class Boot {
 	/**
 	 * Our own routing for handling /document/<number> URLs
 	 */
-	LiftRules.rewrite.append {
+	LiftRules.statefulRewrite.append {
 		case RewriteRequest(ParsePath(List("document", documentNumber), _, _, _), _, _) => 
 				RewriteResponse("document" :: Nil, Map("documentId" -> documentNumber ))
 	}
