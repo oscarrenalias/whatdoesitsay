@@ -16,7 +16,7 @@ import net.renalias.frontend.helpers.FileHelper._
 import wizard.Wizard
 import net.renalias.frontend.helpers.FileHelper
 
-object UploadWizard extends Wizard with Logger {
+trait UploadWizardTrait extends Wizard with Logger {
 	def isImage(f: FileParamHolder): Boolean = {
 		f.fileName match {
 			case FileExtension(x) if x == "png" || x == "jpg" || x == "jpeg" || x == "tif" || x == "tiff" => true
@@ -120,3 +120,6 @@ object UploadWizard extends Wizard with Logger {
 		}
 	}
 }
+
+// get the name in lower case so that it can be used as a snippet
+object uploadwizard extends UploadWizardTrait

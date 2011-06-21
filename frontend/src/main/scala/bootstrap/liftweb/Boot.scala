@@ -16,7 +16,7 @@ import net.renalias.frontend.mongo.MongoConfig
   * A class that's instantiated early and run.  It allows the application
   * to modify lift's environment
   */
-class Boot {
+class Boot extends LazyLoggable {
   def boot {
 
     if (!DB.jndiJdbcConnAvailable_?) {

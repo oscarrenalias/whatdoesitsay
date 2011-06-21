@@ -5,13 +5,16 @@ import http._
 import util._
 import Helpers._
 
-import _root_.scala.xml.{NodeSeq, Text, Group}
-import _root_.net.liftweb.http._
-import _root_.net.liftweb.common._
+import scala.xml.{NodeSeq, Text, Group}
+import net.liftweb.http._
+import net.liftweb.common._
 
 import net.renalias.frontend.model._
 
-class Document extends Logger {
+/**
+ * Note to self: when using the HTML5 parser, snippets must be in lower case
+ */
+class document extends Logger {
 
 	lazy val errorNotFound = Text("The document could not be found")
 
@@ -33,5 +36,5 @@ class Document extends Logger {
 		}
 	}
 
-	def showDocument(xhtml: NodeSeq) = documentInfo(xhtml, S.param("documentId"))
+	def showdocument(xhtml: NodeSeq) = documentInfo(xhtml, S.param("documentId"))
 }
