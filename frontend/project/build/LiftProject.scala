@@ -16,6 +16,7 @@ class LiftProject(info: ProjectInfo) extends DefaultWebProject(info) with IdeaPr
 	  "net.liftweb" %% "lift-mongodb" % liftVersion withSources(),
 	  "net.liftweb" %% "lift-mongodb-record" % liftVersion withSources(),
 	  "net.liftweb" %% "lift-wizard" % liftVersion withSources(),
+    "org.mortbay.jetty" % "jetty" % "6.1.22" % "compile",
     "org.mortbay.jetty" % "jetty" % "6.1.22" % "test",
     "junit" % "junit" % "4.5" % "test",
     "ch.qos.logback" % "logback-classic" % "0.9.26",
