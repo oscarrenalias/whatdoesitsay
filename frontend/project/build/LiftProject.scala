@@ -10,6 +10,8 @@ class LiftProject(info: ProjectInfo) extends DefaultWebProject(info) with IdeaPr
   // this line
   // override def scanDirectories = Nil
 
+  override val jettyPort = 8081
+
   override def libraryDependencies = Set(
     "net.liftweb" %% "lift-webkit" % liftVersion % "compile" withSources(),
     "net.liftweb" %% "lift-mapper" % liftVersion % "compile" withSources(),
@@ -21,6 +23,8 @@ class LiftProject(info: ProjectInfo) extends DefaultWebProject(info) with IdeaPr
     "junit" % "junit" % "4.5" % "test",
     "ch.qos.logback" % "logback-classic" % "0.9.26",
     "org.scala-tools.testing" %% "specs" % "1.6.8" % "test",
-    "com.h2database" % "h2" % "1.2.138"
+    "com.h2database" % "h2" % "1.2.138",
+	"net.databinder" %% "dispatch-http" % "0.8.3",
+	"net.databinder" %% "dispatch-nio" % "0.8.3"
   ) ++ super.libraryDependencies
 }
