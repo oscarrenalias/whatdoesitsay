@@ -9,6 +9,7 @@ import cc.spray.json.JsString._
 import cc.spray.json._
 import scala.Some
 import net.renalias.config.Config
+import java.io.File
 
 object OCRTypes {
 	type OCRPipelineType = (OCRRequest) => (OCRRequest)
@@ -51,6 +52,17 @@ object FileArchiver extends OCRServicePipelineComponent with Logging {
 	}
 }
 
+object FileChecker extends OCRServicePipelineComponent with Logging {
+  def apply(info:OCRRequest) = {
+    if(!FileHelper.isReadable(info.inputFile)) {
+      log.error("Input file " + info.inputFile + " does not exist")
+      throw new Exception("Input file does not exist")
+    }
+
+    info
+  }
+}
+
 sealed case class OCRRequest(inputFile:String, lang:String, var outputFile: Option[String] = None,
                              var result:Option[String] = None, error:Boolean = false, errorInfo:Option[String] = None)
 
@@ -83,7 +95,7 @@ object OCRRequest extends DefaultJsonProtocol {
 
 trait ConvertAndScan {
 	lazy val sourceFolder = Config.getString_!("folders.incoming")
-	lazy val scanPipeline = OCRServiceLogger andThen ImageConversionService andThen OCRService andThen FileArchiver
+	lazy val scanPipeline = FileChecker andThen OCRServiceLogger andThen ImageConversionService andThen OCRService andThen FileArchiver
 }
 
 trait ConvertAndScanTest {
