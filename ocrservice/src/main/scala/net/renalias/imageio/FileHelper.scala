@@ -21,6 +21,8 @@ object FileHelper {
 	def randomName() = StringHelpers.randomString
 	
 	def isImage: Boolean = true
+
+  def isReadable(f:String) = (new File(f)).canRead
 	
 	def getExtension(fileName:String): Option[String] = {
 		fileName.lastIndexOf('.') match {
