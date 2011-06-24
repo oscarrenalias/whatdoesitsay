@@ -6,7 +6,6 @@ import net.liftweb.common.Logger
 
 case class AddJobListener(val jobId: String, val s: ScanJobActor)
 case class RemoveJobListener(val jobId: String, val s: ScanJobActor)
-case class JobCompleted(val jobId: String)
 
 class CometActorManager extends ListenerManager with Logger with Actor {
 

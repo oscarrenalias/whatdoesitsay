@@ -4,11 +4,13 @@ import net.liftweb.http.CometActor
 import _root_.net.liftweb.util.Helpers._
 import _root_.scala.xml.{Text}
 import net.liftweb.common.{Logger, Box, Full, Empty}
-import net.renalias.frontend.model.{ScanJobStatus, ScanJob}
+import net.renalias.frontend.model.{OCRServiceRequest, ScanJobStatus, ScanJob}
+
+case class NewScanRequest(val jobId:String, val fileName: String)
 
 class ScanJobActor extends CometActor with Logger {
 	
-	override def defaultPrefix = Box(Some("Job"))
+	override def defaultPrefix = Box(Some("ScanJob"))
 
 	// full re-render every time
 	override def devMode = true
@@ -45,21 +47,21 @@ class ScanJobActor extends CometActor with Logger {
 
 	override def localSetup = {
 		info("Starting comet actor: " + {jobId})
-		CometActorManager ! AddJobListener(jobId, this)
+		//CometActorManager ! AddJobListener(jobId, this)
 	}
 
 	override def localShutdown = {
 		info("Shutting down comet actor: " + {jobId})
-		CometActorManager ! RemoveJobListener(jobId, this)
+		//CometActorManager ! RemoveJobListener(jobId, this)
 	}
 
 	override def lowPriority = {
-		case JobCompleted(jobId) => {
-			info("Job " + jobId + " notified as complete")
-			jobComplete = true
-			reRender(devMode)
-			CometActorManager ! RemoveJobListener(jobId, this)
-		}
+    case NewScanRequest(jobId, file) => {
+      // send the request
+      // TODO: what to do with the result? is it needed?
+      val result = OCRServiceRequest.call(file)
+      reRender(devMode)
+    }
 		case _ => error("ScanJobActor got a message that did not understand")
 	}
 }

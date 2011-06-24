@@ -15,6 +15,7 @@ import net.renalias.frontend.config.PimpedProps
 import net.renalias.frontend.helpers.FileHelper._
 import wizard.Wizard
 import net.renalias.frontend.helpers.FileHelper
+import net.renalias.frontend.comet._
 
 trait UploadWizardTrait extends Wizard with Logger {
 	def isImage(f: FileParamHolder): Boolean = {
@@ -24,7 +25,6 @@ trait UploadWizardTrait extends Wizard with Logger {
 		}
 	}
 
-	lazy val incomingFolder = PimpedProps.get_!("folders.incoming")
 	lazy val imageFolder = PimpedProps.get_!("folders.static")
 
 	// define the first screen
@@ -77,6 +77,7 @@ trait UploadWizardTrait extends Wizard with Logger {
 	}
 
 	val confirmationScreen = new Screen {
+    // TODO: show the uploaded image here and get the user to confirm that this is the one
 	}
 
 	// what to do on completion of the wizard
@@ -87,32 +88,37 @@ trait UploadWizardTrait extends Wizard with Logger {
 			// save the file to disk	
 			val fileName = jobId + "." + (FileExtension(f.fileName) getOrElse "")
 
-			f.file >>: new File(incomingFolder + fileName)
+			f.file >>: new File(PimpedProps.getf("files.incoming", { _ + fileName }))
 			debug("Saving file " + f.fileName + " to " + fileName)
 
 			// and a copy to the static file folder
-			f.file >>: new File(imageFolder + fileName)
+			f.file >>: new File(PimpedProps.getf("files.static", { _ + fileName }))
 			debug("Saving original image to static image folder")
 
 			// and create a new scanning job in the db
-			var job = ScanJob.createRecord
-			job.originalFileName.set(f.fileName)
-			job.internalFileName.set(fileName)
-			job.status.set(ScanJobStatus.New)
-			job.lang.set(ScanJobLang.ENG)
-			val result = job.save
+			var result = ScanJob.createRecord
+			  .originalFileName(f.fileName)
+			  .internalFileName(fileName)
+			  .status(ScanJobStatus.New)
+			  .lang(ScanJobLang.ENG)
+        .saveTheRecord  // saveTheRecord returns a Box, which is good
 
-			// TODO: fix me
-			//result.map({job => ComponentRegistry.backendServer ! NewAsyncScanRequest(job.id.value.get)})
-
-			Full(result)
+      // notify the comet actor if it went well
+      result map { job =>
+        debug("ScanJob created succesfully, notifying Comet actor...")
+        val actor = new ScanJobActor
+        actor ! NewScanRequest(job.id.is.toString, job.internalFileName.get)
+        job // return the unmodified value
+      }
+      // Box.map returns the box unmodified, so no need to specifically return anything else
 		}
 
-		fileAndLanguageSelection.file.is match {
+		fileAndLanguageSelection.file.get match {
 			case Full(f) => {
 				val fileId = FileHelper.randomName
+        // TODO: fix the language here
 				saveFile(f, fileId, "ENG") match {
-					case Full(job) => S.seeOther("/document/" + job.id.is)
+					case Full(job) => S.seeOther("/document/" + job.id.is.toString)
 					case _ => S.error("There was an error processing your request"); error("Error saving job for file: " + f)
 				}
 			}
