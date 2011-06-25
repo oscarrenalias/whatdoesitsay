@@ -13,6 +13,7 @@ class LiftProject(info: ProjectInfo) extends DefaultWebProject(info) with IdeaPr
   override val jettyPort = 8081
 
   override def libraryDependencies = Set(
+    "net.liftweb" %% "lift-util" % liftVersion % "compile" withSources(),
     "net.liftweb" %% "lift-webkit" % liftVersion % "compile" withSources(),
     "net.liftweb" %% "lift-mapper" % liftVersion % "compile" withSources(),
 	  "net.liftweb" %% "lift-mongodb" % liftVersion withSources(),
