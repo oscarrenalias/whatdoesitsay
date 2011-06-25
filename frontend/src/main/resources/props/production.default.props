@@ -1,3 +1,0 @@
-mongodb.host = "localhost"
-mongodb.port = 27017
-mongodb.dbname = "main"
