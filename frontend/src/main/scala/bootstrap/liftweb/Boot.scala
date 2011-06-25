@@ -19,23 +19,8 @@ import net.renalias.frontend.mongo.MongoConfig
 class Boot extends LazyLoggable {
   def boot {
 
-    if (!DB.jndiJdbcConnAvailable_?) {
-      val vendor = 
-	new StandardDBVendor(Props.get("db.driver") openOr "org.h2.Driver",
-			     Props.get("db.url") openOr 
-			     "jdbc:h2:lift_proto.db;AUTO_SERVER=TRUE",
-			     Props.get("db.user"), Props.get("db.password"))
-
-      LiftRules.unloadHooks.append(vendor.closeAllConnections_! _)
-
-      DB.defineConnectionManager(DefaultConnectionIdentifier, vendor)
-    }	
-	
     // where to search snippet
     LiftRules.addToPackages("net.renalias.frontend")
-
-	// For mapper entities - not needed if we're using couchdb
-    //Schemifier.schemify(true, Schemifier.infoF _, ScanJob)
 
     // Build SiteMap
     def sitemap = SiteMap(
@@ -76,8 +61,6 @@ class Boot extends LazyLoggable {
     // Use HTML5 for rendering
     LiftRules.htmlProperties.default.set((r: Req) => new Html5Properties(r.userAgent))
 
-    S.addAround(DB.buildLoanWrapper)
-
-	  MongoConfig.init
+ 	  MongoConfig.init
   }
 }
