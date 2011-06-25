@@ -8,7 +8,7 @@ object ConsoleHelper {
 	val server = new Server
 	val scc = new SelectChannelConnector
 
-	scc.setPort(8080)
+	scc.setPort(8081)
 	server.setConnectors(Array(scc))
 
 	val context = new WebAppContext()
