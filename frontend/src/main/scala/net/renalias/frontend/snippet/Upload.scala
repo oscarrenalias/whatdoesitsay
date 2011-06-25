@@ -106,8 +106,12 @@ trait UploadWizardTrait extends Wizard with Logger {
       // notify the comet actor if it went well
       result map { job =>
         debug("ScanJob created succesfully, notifying Comet actor...")
-        val actor = new ScanJobActor
-        actor ! NewScanRequest(job.id.is.toString, job.internalFileName.get)
+        //val actor = new ScanJobActor
+        //actor ! NewScanRequest(job.id.is.toString, job.internalFileName.get)
+        S.session map { sess =>
+          debug("Sending CometActor a message to perform the REST request...")
+          sess.sendCometActorMessage("ScanJobActor", Full(job.id.is.toString), NewScanRequest(job.id.is.toString, job.internalFileName.get))
+        }
         job // return the unmodified value
       }
       // Box.map returns the box unmodified, so no need to specifically return anything else

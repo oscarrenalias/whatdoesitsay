@@ -7,7 +7,6 @@ import net.renalias.frontend.model.{OCRServiceResponse, OCRServiceRequest, ScanJ
 import net.liftweb.common._
 
 case class NewScanRequest(val jobId: String, val fileName: String)
-
 case class UpdateScanRequest(val jobId: String, val scanJob: Box[OCRServiceResponse])
 
 class ScanJobActor extends CometActor with Logger {
