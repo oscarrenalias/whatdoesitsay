@@ -31,12 +31,5 @@ class ScanJob extends MongoRecord[ScanJob] with ObjectIdPk[ScanJob] {
  }
 
 object ScanJob extends ScanJob with MongoMetaRecord[ScanJob] {
-  /*def findAll: List[ScanJob] = {
-    val viewReturn = ScanJob.queryView("scanjob", "scanjob_findAll")
-    viewReturn match {
-      case Full(v) =>  return v.toList
-      case Empty => return Nil
-    }
-  }*/
 	override def collectionName = "scanjobs"
 }
