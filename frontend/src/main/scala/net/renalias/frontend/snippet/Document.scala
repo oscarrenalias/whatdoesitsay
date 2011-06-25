@@ -21,7 +21,7 @@ class document extends Logger {
 	def documentInfo(xhtml: NodeSeq, docId: Box[String]): NodeSeq = {
 		docId match {
 			case Full(docId) => {
-				ScanJob.find(docId) match {
+  				ScanJob.find(docId) match {
 					case Full(job) if (job.status.value != ScanJobStatus.Completed) => {
 						info("docId = " + docId)
 						<lift:comet type="ScanJobActor" name={docId}/>
