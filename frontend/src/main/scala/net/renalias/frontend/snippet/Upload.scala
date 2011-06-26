@@ -112,6 +112,7 @@ trait UploadWizardTrait extends Wizard with Logger {
           debug("Sending CometActor a message to perform the REST request...")
           sess.sendCometActorMessage("ScanJobActor", Full(job.id.is.toString), NewScanRequest(job.id.is.toString, job.internalFileName.get))
         }
+
         job // return the unmodified value
       }
       // Box.map returns the box unmodified, so no need to specifically return anything else

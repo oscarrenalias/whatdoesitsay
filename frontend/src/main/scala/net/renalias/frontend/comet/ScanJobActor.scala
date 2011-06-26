@@ -3,11 +3,14 @@ package net.renalias.frontend.comet
 import net.liftweb.http.CometActor
 import _root_.net.liftweb.util.Helpers._
 import _root_.scala.xml.{Text}
-import net.renalias.frontend.model.{OCRServiceResponse, OCRServiceRequest, ScanJobStatus, ScanJob}
+import net.renalias.frontend.model._
+import net.renalias.frontend.snippet.documentIdRequestVar
 import net.liftweb.common._
+import actors.Actor
 
 case class NewScanRequest(val jobId: String, val fileName: String)
 case class UpdateScanRequest(val jobId: String, val scanJob: Box[OCRServiceResponse])
+case class ScanRequestReady(val jobId: String, val scanJob: Box[OCRServiceResponse])
 
 class ScanJobActor extends CometActor with Logger {
 
@@ -39,7 +42,7 @@ class ScanJobActor extends CometActor with Logger {
       case Full(job) if (job.status.is == ScanJobStatus.Completed) => {
         //log.debug("Job " + jobId + "is already completed, not need to set up the actor")
         //Text("job: " + job.jobId.is + " - status: " + job.status.is + "-text:" + job.text.is)
-        info("Job compelted - returning full template")
+        info("Job completed - returning full template")
         <lift:embed what="/templates-hidden/job-data"/>
       }
       case _ => errorNotFound
@@ -47,27 +50,30 @@ class ScanJobActor extends CometActor with Logger {
   }
 
   override def localSetup = {
-    info("Starting comet actor: " + {
-      jobId
-    })
-    //CometActorManager ! AddJobListener(jobId, this)
+    info("Starting comet actor: " + { jobId })
   }
 
   override def localShutdown = {
-    info("Shutting down comet actor: " + {
-      jobId
-    })
-    //CometActorManager ! RemoveJobListener(jobId, this)
+    info("Shutting down comet actor: " + { jobId })
   }
 
   override def lowPriority = {
     case NewScanRequest(jobId, file) => {
-      debug("Calling OCR Service...")
-      val result = OCRServiceRequest.call(file)
-      debug("OCR Service result received: " + result.openOr("Response was a failure"))
 
-      // update the record in the db
-      this ! UpdateScanRequest(jobId, result)
+      // moved to a separate actor so that it does not block this actor
+      val doRequest = new Actor {
+        def act() {
+          react {
+            case (f:String,sender:CometActor) => {
+              val result = OCRServiceRequest.call(f)
+              debug("OCR Service result received: " + result.openOr("Response was a failure"))
+              sender !  UpdateScanRequest(jobId, result)
+            }
+          }
+        }
+      }
+      doRequest.start
+      doRequest ! (file, this)
     }
     case UpdateScanRequest(jobId, result) => {
       // update the record in the db
@@ -84,8 +90,16 @@ class ScanJobActor extends CometActor with Logger {
             job.save
           }
         }
-        reRender(devMode)
+        this ! ScanRequestReady(jobId, result)
       }
+    }
+    case ScanRequestReady(jobId, result) => {
+      debug("Scan request:" + jobId + " is ready. Refreshing.")
+
+      // update the request var so that the snippet can find it
+      documentIdRequestVar(Full(jobId))
+      // and refresh the page
+      reRender(devMode)
     }
     case _ => error("ScanJobActor got a message that did not understand")
   }
