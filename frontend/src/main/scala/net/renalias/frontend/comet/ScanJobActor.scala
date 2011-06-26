@@ -4,7 +4,7 @@ import net.liftweb.http.CometActor
 import _root_.net.liftweb.util.Helpers._
 import _root_.scala.xml.{Text}
 import net.renalias.frontend.model._
-import net.renalias.frontend.snippet.documentIdRequestVar
+import net.renalias.frontend.snippet.document._
 import net.liftweb.common._
 import actors.Actor
 
@@ -22,7 +22,7 @@ class ScanJobActor extends CometActor with Logger {
   // to track whether the job has been completed or not
   var jobComplete = false
 
-  // lifespan of the comet actor
+  // maximum lifespan of the comet actor
   override def lifespan = Full(5 minutes)
 
   lazy val errorNotFound = Text("Job information not found")
@@ -36,30 +36,23 @@ class ScanJobActor extends CometActor with Logger {
   def render = {
     ScanJob.find(jobId) match {
       case Full(job) if (job.status.is != ScanJobStatus.Completed) => {
-        info("Job " + jobId + "isn't ready yet, setting up the actor...")
+        debug("Job " + jobId + "isn't ready yet, setting up the actor...")
         Text("job: " + job.id.is + " - status: " + job.status.is)
       }
       case Full(job) if (job.status.is == ScanJobStatus.Completed) => {
-        //log.debug("Job " + jobId + "is already completed, not need to set up the actor")
-        //Text("job: " + job.jobId.is + " - status: " + job.status.is + "-text:" + job.text.is)
-        info("Job completed - returning full template")
+        debug("Job completed - returning full template")
         <lift:embed what="/templates-hidden/job-data"/>
       }
       case _ => errorNotFound
     }
   }
 
-  override def localSetup = {
-    info("Starting comet actor: " + { jobId })
-  }
+  override def localSetup = debug("Starting comet actor: " + jobId )
 
-  override def localShutdown = {
-    info("Shutting down comet actor: " + { jobId })
-  }
+  override def localShutdown = debug("Shutting down comet actor: " + jobId)
 
   override def lowPriority = {
     case NewScanRequest(jobId, file) => {
-
       // moved to a separate actor so that it does not block this actor
       val doRequest = new Actor {
         def act() {
@@ -67,6 +60,7 @@ class ScanJobActor extends CometActor with Logger {
             case (f:String,sender:CometActor) => {
               val result = OCRServiceRequest.call(f)
               debug("OCR Service result received: " + result.openOr("Response was a failure"))
+	            // send a message back to the Comet actor
               sender !  UpdateScanRequest(jobId, result)
             }
           }
@@ -97,7 +91,7 @@ class ScanJobActor extends CometActor with Logger {
       debug("Scan request:" + jobId + " is ready. Refreshing.")
 
       // update the request var so that the snippet can find it
-      documentIdRequestVar(Full(jobId))
+      documentIdSessionVar(Full(jobId))
       // and refresh the page
       reRender(devMode)
     }
