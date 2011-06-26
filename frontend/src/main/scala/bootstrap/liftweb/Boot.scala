@@ -52,15 +52,15 @@ class Boot extends LazyLoggable {
 				RewriteResponse("document" :: Nil, Map("documentId" -> documentNumber ))
 	}
 
-    // Force the request to be UTF-8
-    LiftRules.early.append(_.setCharacterEncoding("UTF-8"))
+  // Force the request to be UTF-8
+  // LiftRules.early.append(_.setCharacterEncoding("UTF-8"))
 
-    // What is the function to test if a user is logged in?
-    //LiftRules.loggedInTest = Full(() => User.loggedIn_?)
+  // What is the function to test if a user is logged in?
+  //LiftRules.loggedInTest = Full(() => User.loggedIn_?)
 
-    // Use HTML5 for rendering
-    LiftRules.htmlProperties.default.set((r: Req) => new Html5Properties(r.userAgent))
+  // Use HTML5 for rendering
+  LiftRules.htmlProperties.default.set((r: Req) => new Html5Properties(r.userAgent))
 
- 	  MongoConfig.init
+  MongoConfig.init
   }
 }

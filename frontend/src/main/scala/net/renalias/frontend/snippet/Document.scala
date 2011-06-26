@@ -16,23 +16,23 @@ import net.renalias.frontend.model._
  */
 class document extends Logger {
 
-	lazy val errorNotFound = Text("The document could not be found")
+	lazy val errorNotFound = (id:String) => Text("The document " + id + " could not be found")
 
 	def documentInfo(xhtml: NodeSeq, docId: Box[String]): NodeSeq = {
 		docId match {
 			case Full(docId) => {
   				ScanJob.find(docId) match {
-					case Full(job) if (job.status.value != ScanJobStatus.Completed) => {
+					case Full(job) if (job.status.value == ScanJobStatus.New) => {
 						info("docId = " + docId)
 						<lift:comet type="ScanJobActor" name={docId}/>
 					}
 					case Full(job) if (job.status.value == ScanJobStatus.Completed) => {
 						bind("document", xhtml, "id" -> job.id.is.toString, "status" -> job.status.value.toString, "text" -> job.text.value.getOrElse(""))
 					}
-					case _ => errorNotFound
+					case _ => errorNotFound(docId)
 				}
 			}
-			case _ => errorNotFound
+			case _ => errorNotFound("(no number)")
 		}
 	}
 

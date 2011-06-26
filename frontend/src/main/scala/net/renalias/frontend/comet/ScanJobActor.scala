@@ -40,7 +40,7 @@ class ScanJobActor extends CometActor with Logger {
         //log.debug("Job " + jobId + "is already completed, not need to set up the actor")
         //Text("job: " + job.jobId.is + " - status: " + job.status.is + "-text:" + job.text.is)
         info("Job compelted - returning full template")
-          <lift:embed what="/templates-hidden/job-data"/>
+        <lift:embed what="/templates-hidden/job-data"/>
       }
       case _ => errorNotFound
     }
@@ -62,31 +62,29 @@ class ScanJobActor extends CometActor with Logger {
 
   override def lowPriority = {
     case NewScanRequest(jobId, file) => {
-      // send the request
-      // TODO: what to do with the result? is it needed?
       debug("Calling OCR Service...")
       val result = OCRServiceRequest.call(file)
       debug("OCR Service result received: " + result.openOr("Response was a failure"))
 
       // update the record in the db
       this ! UpdateScanRequest(jobId, result)
-      reRender(devMode)
     }
     case UpdateScanRequest(jobId, result) => {
       // update the record in the db
       ScanJob.find(jobId) map { job =>
         // this body will only run if the job was found in the db
-          result match {
-            case Full(response) => {
-              job.text.set(response.text)
-              job.status.set(ScanJobStatus.Completed)
-              job.save
-            }
-            case _ /*Failure(msg, _, _)*/ => {
-              job.status.set(ScanJobStatus.Error)
-              job.save
-            }
+        result match {
+          case Full(response) => {
+            job.text.set(response.text)
+            job.status.set(ScanJobStatus.Completed)
+            job.save
           }
+          case _ /*Failure(msg, _, _)*/ => {
+            job.status.set(ScanJobStatus.Error)
+            job.save
+          }
+        }
+        reRender(devMode)
       }
     }
     case _ => error("ScanJobActor got a message that did not understand")
