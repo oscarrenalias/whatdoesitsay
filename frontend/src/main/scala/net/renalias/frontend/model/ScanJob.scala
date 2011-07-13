@@ -1,7 +1,7 @@
 package net.renalias.frontend.model
 
 import java.util.Calendar
-import net.renalias.frontend.config.PimpedProps
+import net.renalias.frontend.config.Config
 import net.liftweb.mongodb.record.field.ObjectIdPk
 import net.liftweb.mongodb.record.{MongoMetaRecord, MongoRecord}
 import net.liftweb.record.field._
@@ -27,7 +27,7 @@ class ScanJob extends MongoRecord[ScanJob] with ObjectIdPk[ScanJob] {
 	object completedDate extends OptionalDateTimeField(this)
 	object text extends OptionalTextareaField(this, 999999) // TODO: check if we can have a field of unlimited size here
 
-	def internalFilePath = PimpedProps.getf("folders.incoming", {r => r + "/" + internalFileName.value})
+	def internalFilePath = Config.getStringF("folders.incoming", {r => r + "/" + internalFileName.value})
  }
 
 object ScanJob extends ScanJob with MongoMetaRecord[ScanJob] {

@@ -1,6 +1,7 @@
 package net.renalias.frontend.helpers
 
 import java.io._
+import net.renalias.helpers.StringHelpers
 
 class FileHelper(val file : File) {
 	// saves data to the given file in binary format

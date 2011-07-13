@@ -11,11 +11,12 @@ import _root_.net.liftweb.common._
 import java.io.File
 
 import net.renalias.frontend.model._
-import net.renalias.frontend.config.PimpedProps
+import net.renalias.frontend.config.Config
 import net.renalias.frontend.helpers.FileHelper._
 import wizard.Wizard
 import net.renalias.frontend.helpers.FileHelper
 import net.renalias.frontend.comet._
+import net.renalias.frontend.config.Config
 
 trait UploadWizardTrait extends Wizard with Logger {
 	def isImage(f: FileParamHolder): Boolean = {
@@ -25,7 +26,7 @@ trait UploadWizardTrait extends Wizard with Logger {
 		}
 	}
 
-	lazy val imageFolder = PimpedProps.get_!("folders.static")
+	lazy val imageFolder = Config.getString_!("folders.static")
 
 	// define the first screen
 	val fileAndLanguageSelection = new Screen {
@@ -88,11 +89,11 @@ trait UploadWizardTrait extends Wizard with Logger {
 			// save the file to disk	
 			val fileName = jobId + "." + (FileExtension(f.fileName) getOrElse "")
 
-			f.file >>: new File(PimpedProps.getf("files.incoming", { _ + fileName }))
+			f.file >>: new File(Config.getStringF("files.incoming", { _ + fileName }))
 			debug("Saving file " + f.fileName + " to " + fileName)
 
 			// and a copy to the static file folder
-			f.file >>: new File(PimpedProps.getf("files.static", { _ + fileName }))
+			f.file >>: new File(Config.getStringF("files.static", { _ + fileName }))
 			debug("Saving original image to static image folder")
 
 			// and create a new scanning job in the db
