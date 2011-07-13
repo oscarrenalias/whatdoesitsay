@@ -1,6 +1,5 @@
 package net.renalias.ocrservice
 
-import akka.event.slf4j.Logging
 import net.renalias.ocrservice.OCRTypes.OCRServicePipelineComponent
 import net.renalias.imageio.{FileHelper, Scanner, ImageConverter, ImageFileChecker}
 import cc.spray.json.JsObject._
@@ -8,8 +7,8 @@ import cc.spray.json.JsBoolean._
 import cc.spray.json.JsString._
 import cc.spray.json._
 import scala.Some
-import net.renalias.config.Config
 import java.io.File
+import net.renalias.logging.Logging
 
 object OCRTypes {
 	type OCRPipelineType = (OCRRequest) => (OCRRequest)

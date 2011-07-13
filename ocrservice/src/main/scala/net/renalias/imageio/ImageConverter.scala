@@ -1,9 +1,9 @@
 package net.renalias.imageio
 
 import xsbt.Process
-import akka.event.slf4j.Logging
-import net.renalias.config.Config
 import net.renalias.imageio.ConverterTypes._
+import net.renalias.ocrservice.Config
+import net.renalias.logging.Logging
 
 object ConverterTypes {
 	type ConverterResultType = Either[Option[Exception],String]

@@ -2,11 +2,11 @@ package net.renalias.imageio
 
 import xsbt.Process
 import java.io.File
-import akka.event.slf4j.Logging
-import net.renalias.config.Config
 import net.renalias.imageio.FileHelper._
 import net.renalias.imageio.ScannerTypes._
 import scala.{Right, Some}
+import net.renalias.ocrservice.Config
+import net.renalias.logging.Logging
 
 object ScannerTypes {
 	type ScannerResultType = Either[Option[Exception],String]

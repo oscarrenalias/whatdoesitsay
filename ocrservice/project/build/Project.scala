@@ -30,7 +30,6 @@ class Project(info: ProjectInfo) extends DefaultWebProject(info) with AkkaProjec
   
   // slf4j is not required but a good option for logging
   val akkaSlf4j = akkaModule("slf4j") withSources()
-  val logback   = "ch.qos.logback" % "logback-classic" % "0.9.28" % "runtime" // a good logging backend for slf4j
 
   // for testing
   val JETTY_VERSION = "8.0.0.M2" // e.g. "7.2.0.v20101020" for testing the Jetty7ConnectorServlet 
@@ -38,8 +37,10 @@ class Project(info: ProjectInfo) extends DefaultWebProject(info) with AkkaProjec
   val jettyServer = "org.eclipse.jetty" % "jetty-server" % JETTY_VERSION % "test"
   val jettyWebApp = "org.eclipse.jetty" % "jetty-webapp" % JETTY_VERSION % "test"
 
-	val configgyRepo = "Scala-tools Maven Repository" at "http://scala-tools.org/repo-releases/"
-	val configgy = "net.lag" % "configgy" % "2.0.0" intransitive()
+	//val configgyRepo = "Scala-tools Maven Repository" at "http://scala-tools.org/repo-releases/"
+	//val configgy = "net.lag" % "configgy" % "2.0.0" intransitive()
+  val renaliasRepo = "Renalias.net Maven reporitory" at "http://phunkphorce.github.com/maven"
+  val scala_common = "net.renalias" %% "scala-common" % "20110712" withSources()
 
 	val sprayJsonModuleConfig = ModuleConfiguration("cc.spray.json", ScalaToolsSnapshots)
 	val sprayJson = "cc.spray.json" %% "spray-json" % "1.0.0-SNAPSHOT" % "compile" withSources()
